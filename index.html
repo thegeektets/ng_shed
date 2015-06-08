@@ -22,6 +22,7 @@
     <link rel="stylesheet" href="css/vendor/angularstrap/bootstrap-datepicker.css">
     <link rel="stylesheet" href="css/vendor/angularstrap/bootstrap-timepicker.css">
     <link rel="stylesheet" href="css/app.css">
+    <link rel="stylesheet" href="css/animate.min.css">
 
 </head>
 
@@ -122,7 +123,7 @@
 
 
 
-<!-- CACHE FILE: users.list.html -->
+<!-- CACHE FILE: users.login.html -->
 <script type="text/ng-template" id="users.login.html">
 
 	<div class="container" fade-in>
@@ -308,19 +309,21 @@
 			<h3> Book Title :{{book.title}} </h3>
 			 <div class = 'row'>
 			 <div class="col-md-2">
-	    	 <img ng-src='img/{{book.image.replace("C:\\fakepath\\", "")}}' alt="image" width='100%'/>
+	    	 <img ng-if='book.image'ng-src='img/{{book.image.replace("C:\\fakepath\\", "")}}' alt="image" width='100%'/>
+	    	 <img ng-if='book.pic'ng-src='{{book.pic}}' alt="image" width='100%'/>
+
+
 	         </div>
 	         <div class="col-md-10">
 			<h4> Author : <span style="color:#a91b0c" ng-click="$parent.filters = {author: book.author}">{{book.author}}</span> </h4>
 			<h5> Category : {{book.category}} </h5>
-			<h5> Team Reference : {{book.teamreference.id}} </h5>
+			<h5> Publication Date : {{book.dateofpublication}} </h5>
 			<p>Description : {{book.description}}</p>
 			</div>
 			</div>
 
 			
 			<a href="#/viewbook/{{book._id.$oid}}" class="btn btn-primary"> View Book </a>
-			<a href="#/editbook/{{book._id.$oid}}" class="btn btn-success"> Edit Book </a>
 			
 			
 		
@@ -363,12 +366,15 @@
 	    </div>
 	
        <div class="col-md-6">
-	    	<img ng-src='img/{{book.image.replace("C:\\fakepath\\", "")}}' alt="Description" width='100%'/>
+            <img ng-if ='book.image' ng-src='img/{{book.image.replace("C:\\fakepath\\", "")}}' alt="image" width='100%'/>
+	    	<img ng-if='book.pic' ng-src='{{book.pic}}' alt="image" width='100%'/>
 	    </div>
 	    </div>
 	    <div class="row" style="padding:20px">
 	    <a href="#/viewbook/{{relatedbook._id.$oid}}" ng-repeat="relatedbook in relatedbooks | orderBy:ordertype | filter :book.category " ng-show="relatedbook._id.$oid">
-      		 <img ng-src='img/{{relatedbook.image.replace("C:\\fakepath\\", "")}}' alt="image" width='15%' style='float:left'/>
+      		  <img ng-if='relatedbook.image' ng-src='img/{{relatedbook.image.replace("C:\\fakepath\\", "")}}' alt="image" width='15%' style='float:left'/>
+      		  <img ng-if='relatedbook.pic' ng-src='{{relatedbook.pic}}' alt="image" width='15%' style='float:left'/>
+      		
 	      
     	</a>
 	    </div>
@@ -455,6 +461,56 @@
      <div class="well">
 	<hr/>
 	<form name="myform"  novalidate class="container css-form"> 
+
+
+			<div class='container form-row'>
+					<div class="animated zoomInRight">
+				        <div class="input-group search-bar">
+				          <input type="text" ng-model="search" ng-change="change()" onclick="select()" class="form-control" placeholder="search book" autofocus />
+				          <span class="input-group-addon bar-style"><i class="glyphicon glyphicon-search"></i></span>
+				        </div>
+
+				    <div ng-if="!details">
+					  Loading results...
+					</div>
+						<div ng-if="details">
+					  <img ng-src="{{ details.items['0'].volumeInfo.imageLinks.thumbnail }}" class="thumbnail animated flip movie-poster">
+
+					  <span class="span-outer">
+					    <a href="#" target="_blank">{{ details.items['0'].volumeInfo.title }}</a>
+					    <h5>{{details.items['0'].volumeInfo.subtitle}}</h5>
+					  </span> 
+					  <p><strong>Published on:</strong> {{ details.items['0'].volumeInfo.publishedDate }} </p>
+					  <p class="outer-p">
+					    <div class="inner-p">
+					      <span class="label label-primary">Publisher :</span> {{ details.items['0'].volumeInfo.publisher }}
+					    </div>
+					    <div class="inner-p">
+					      <span class="label label-primary">Author :</span> {{ details.items['0'].volumeInfo.authors['0'] }}
+					    </div>
+					    <div class="inner-p">
+					      <span class="label label-primary">Type :</span> {{ details.items['0'].volumeInfo.printType }}
+					    </div>
+					     <div class="inner-p">
+					      <span class="label label-primary">Description :</span> {{ details.items['0'].volumeInfo.description }}
+					    </div>
+					  	  </p>
+
+					  <p class="outer-p-2">Ratings:<br>
+					    <strong>Average Rating</strong>: <span class="label label-success">{{ details.items['0'].volumeInfo.averageRating }}</span><br>
+							  </p>
+
+					  
+					</div>
+
+					<div ng-if="!details">
+					  No results found.
+					</div>
+				</div>
+
+			</div>
+
+		<div ng-if='$scope.addmanually'>
 			<div class="container form-row">
 			        Book Title:&nbsp;&nbsp;&nbsp;
 					<input class="form-control"type="text" name="title" ng-model="book.title" placeholder="Book Title" required ng-minlength= "2" />
@@ -495,17 +551,19 @@
 			<input class="form-control" type="text" name="category" ng-model="book.category" placeholder="Category" ng-required= "true" ng-minlength= "2" />
 			</div>
 										
+			<!--   
+			
 			<div class="container form-row">
 			      Team Reference:&nbsp;&nbsp;&nbsp;
 				   <select class="form-control" name="teamreference" ng-model="book.teamreference" ng-options="teamreference as teamreference.desc for teamreference in teamreferences" ng-required= "true" ng-minlength= "2">
 			       <option value="">Please select an option</option>
 			       </select>
 			</div> 
-			   
 			<div class="container form-row">
 			        Tags:&nbsp;&nbsp;&nbsp;
 					<input class="form-control"  type="text" name="book.tags" ng-model="tags" placeholder="Tags" ng-required= "true" ng-minlength= "2" />
 			</div>
+			-->
 			   
 			<div class="container form-row">
 			        Library Type:&nbsp;&nbsp;&nbsp;
@@ -516,10 +574,15 @@
 			        <option value="">Please select an option</option>
 			</select>
 			</div>
+		</div>
 
 			<div class="container input-group form-row " style="padding:5px">
-					<input type= "button" ng-click="save()" ng-disabled="isClean() || $form.invalid" value="Save Book" class="btn btn-success" style="margin:2px"> </input>
-					<input type= "button" ng-click="destroy()" value="Remove Book" class="btn btn-danger" style="margin:2px"> </input>
+					<input type= "button" ng-click="manual()" ng-if='addmanually' value="Add Manually" class="btn btn-success" style="margin:2px"> </input>
+					
+					<input type= "button" ng-click="save()" ng-disabled="isClean() || $form.invalid" ng-if='details' value="Save Book" class="btn btn-success" style="margin:2px"> </input>
+					<!--
+					<input type= "button" ng-click="destroy()" ng-if='' value="Remove Book" class="btn btn-danger" style="margin:2px"> </input>
+					-->
 			</div>
 
 				
