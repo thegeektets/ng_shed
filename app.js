@@ -377,7 +377,7 @@ $scope.change = function(){
 
 function fetch() {
   $http.get("https://www.googleapis.com/books/v1/volumes?q=" + 
-     $scope.search + "&tomatoes=true&plot=full")
+     $scope.search)
    .success(function(response){
     $scope.details = response;
 
