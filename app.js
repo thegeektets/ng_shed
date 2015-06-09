@@ -7,8 +7,25 @@ var shed = angular.module('shed', ['restangular', 'ngRoute','angularFileUpload']
 				templateUrl: 'books.list.html'
         
 			}).
+       when('/invite', {
+         controller: InvCtrl,
+         templateUrl: 'users.invite.html'
+
+      }).
       when('/login', {
          templateUrl: 'users.login.html'
+
+      }).
+       when('/register', {
+         controller: RegCtrl,
+         templateUrl: 'users.signup.html'
+
+      }).
+      when('/registernew/:email/:invite', {
+          controller: RegnwCtrl,
+        templateUrl: 'users.detail.html'
+      
+
 
       }).
 			when('/addbook', {
@@ -92,7 +109,7 @@ var shed = angular.module('shed', ['restangular', 'ngRoute','angularFileUpload']
     $rootScope.$on( "$routeChangeStart", function(event, next, current) {
       if (!$rootScope.authService.authorized()) {
           console.log('login required');
-        if ( next.templateUrl === "users.login.html") {
+        if ( next.templateUrl === "users.login.html" || next.templateUrl === "users.signup.html"|| next.templateUrl === "users.detail.html") {
         } else {
           $location.path("/login");
         }
@@ -198,6 +215,10 @@ shed.factory('AuthService',
         var initialState = true;
 
         var userid = null;
+        var user_type = null;
+
+        var currentTeam = null;
+
         return {
             initialState:function () {
                 return initialState;
@@ -208,7 +229,10 @@ shed.factory('AuthService',
       
              success(function(data) {
              $rootScope.users = data;
-             // angular.forEach($rootScope.users, function(user){
+                     
+             
+
+
                 	for(i = $rootScope.users.length -1;i >= 0 ; i--){
                   		    user = $rootScope.users[i];
                 			  if(user.username === name  && user.password === password){
@@ -217,6 +241,7 @@ shed.factory('AuthService',
                 			  	   userid = user._id.$oid;
                 			  	    authorized = true;
                 	   			   initialState = false;
+                             user_type = user.user_type;
 
                             console.log('logged in');
                             break;
@@ -227,8 +252,21 @@ shed.factory('AuthService',
                 			  }
 
                 		}
+                if(user_type == 'admin'){ 
+      					$http.get('https://api.mongolab.com/api/1/databases/shed_database/collections/teams/?apiKey=Iwy7zOOBBd6lUzN5jBhLNhv68Wv8UfUl')
+                .success(function(data){
+                    $rootScope.teams = data;
+                    for(i = $rootScope.teams.length -1;i >= 0 ; i--){
+                          team = $rootScope.teams[i];
+                        if(email === team.name  ){
+                             currentTeam = name;
+                            
+                        }
+                        
 
-      					
+                    }
+                });
+              }
       					//});
         });
                  
@@ -255,7 +293,9 @@ shed.factory('AuthService',
                 return authorized;
             },
             
-
+            currentTeam:function(){
+                return currentTeam;
+            },
             isAuthenticated: function() {
                 
               if (authorized) {
@@ -271,6 +311,26 @@ shed.factory('AuthService',
         };
     }
 );
+var compareTo = function() {
+    return {
+      require: "ngModel",
+      scope: {
+        otherModelValue: "=compareTo"
+      },
+      link: function(scope, element, attributes, ngModel) {
+
+        ngModel.$validators.compareTo = function(modelValue) {
+          return modelValue == scope.otherModelValue;
+        };
+
+        scope.$watch("otherModelValue", function() {
+          ngModel.$validate();
+        });
+      }
+    };
+  };
+
+shed.directive("compareTo", compareTo);
 
 FileUploadCtrl.$inject = ['$scope']
 function FileUploadCtrl(scope) {
@@ -337,8 +397,100 @@ function ListCtrl($scope, Restangular) {
 	$scope.users = Restangular.all("users").getList().$object;
 	//$scope.groups = Restangular.all("groups").getList().$object;
 }
+function InvCtrl($scope, $location, Restangular,$rootScope,$http) {
+
+  
+       $scope.invite = function() {
+        $scope.user = {};
+      
+        $scope.user.invitedby = $rootScope.authService.userId();
+        $scope.user.email = $scope.invitation.email;
+          var mail = 0;
+        $scope.invitation.user = $rootScope.authService.currentUser();
+        $scope.invitation.team = $rootScope.authService.currentTeam();
+        $scope.invitation.link = $location.host() +'/shed'+'#/registernew/'+$scope.user.email+'/'+$scope.user.invitedby;
 
 
+
+        
+
+       $http.post("mail.php", {"invitation": $scope.invitation  })
+       .success(function(data, status, headers, config) {
+            $scope.data = data;
+            console.log('success:'+data);
+            console.log($scope.invitation.link);
+
+        Restangular.all('users').post($scope.user).then(function (user) {
+        $location.path('/list');
+       });
+          
+                 }).error(function(data, status, headers, config) {
+              $scope.status = status;
+              console.log('error:'+data);
+          });
+
+          console.log(mail);
+
+       
+  
+             
+
+
+          
+       }
+}
+function RegnwCtrl($scope, $location, Restangular,$http, $route){
+   
+
+
+           
+
+
+            $http.get('https://api.mongolab.com/api/1/databases/shed_database/collections/users/?apiKey=Iwy7zOOBBd6lUzN5jBhLNhv68Wv8UfUl&q={"email":"'+$route.current.params.email+'","invitedby":"'+$route.current.params.invite+'"}&f')
+                .success(function(data){
+                 
+                 $scope.user = data;
+
+                });
+    
+
+    $scope.save = function () {
+           var data = {
+           // json: JSON.stringify({
+                password: $scope.user.password,
+                username: $scope.user.username
+          //  })
+         };
+        $http.post('https://api.mongolab.com/api/1/databases/shed_database/collections/users/?apiKey=Iwy7zOOBBd6lUzN5jBhLNhv68Wv8UfUl&q={"email":"'+$route.current.params.email+'","invitedby":"'+$route.current.params.invite+'"}&f',data).success(function(data, status) {
+           
+   
+      $location.path('/login');
+    })
+  };
+   
+}
+function RegCtrl($scope, $location, Restangular) {
+
+    
+
+  
+  $scope.save = function () {
+
+    $scope.team.admin = $scope.user.username;
+    
+    $scope.user.user_type = 'admin';
+  
+    Restangular.all('users').post($scope.user).then(
+
+      function (user) {
+      Restangular.all('teams').post($scope.team).then(
+
+      function (team) {
+      $location.path('/list');
+    });
+    });
+  }
+}
 
 function CreateCtrl($scope, $location, Restangular) {
 	

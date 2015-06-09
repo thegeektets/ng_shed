@@ -1,0 +1,18 @@
+Responsive & Flat - Un kit newsletter flat, responsive et compatible tous clients mails.
+=======
+
+Bonjour, et merci d'avoir téléchargé ce kit pour newsletters ! Le code HTML est annoté, vous permettant de distinguer les différentes parties du kit. En cas de questions, n'hésitez pas à nous contacter (contact@agencepenrose.com). Bonne utilisation !
+
+## Changement d'images
+
++ Le logo actuel mesure 147x23 pixels. Vous pouvez le remplacer facilement, mais éviter d'utiliser une image de plus de 150px de largeur, afin que les icônes des différents réseaux sociaux aient la place de s'afficher sur la version mobile.
+
++ Les vignettes des articles ont une taille de 120x120 pixels. L'arrondi est généré par le css présent dans le code (border-radius), il n'est donc pas nécessaire de l'appliquer à la vignette elle-même. En d'autres termes, il vous suffit d'ajouter une image carrée, le css se chargera d'appliquer l'effet des "angles arrondis" sur les messageries compatibles.
+
++ L'image du cadeau mesure 340x187 pixels. Il est possible de la remplacer par une image de taille différente, mais évitez de dépasser les 620 pixels de largeur, afin de ne pas "casser" le kit.
+
+
+## Crédits images
+
++ L'image "cadeau.gif" est tirée du pack "Flat UI" par Designmodo (http://designmodo.github.io/Flat-UI/)
++ Les vignettes des différents articles sont des miniatures d'images disponibles sur iStock (http://www.istockphoto.com)

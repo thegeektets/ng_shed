@@ -45,8 +45,10 @@
 
       <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
       <ul class="nav navbar-nav">
-        <li class="active"><a href="#">Books List <span class="sr-only">(current)</span></a></li>
+        <li class=""><a href="#">Books List <span class="sr-only">(current)</span></a></li>
         <li class=""><a href="#/addbook">Add Book <span class="sr-only">(current)</span></a></li>
+         <li class=""><a href="#/invite">Invite Users <span class="sr-only">(current)</span></a></li>
+       
        
 
        </ul>
@@ -60,6 +62,8 @@
                 <a href="#loginModal" role="button" class="btn btn-primary" data-toggle="modal">
                     <i class="glyphicon glyphicon-user glyphicon-white"></i> Sign in</a>
             </div>
+
+        
             <div ng-show="authService.isLoggedIn()">
                 <a class="btn btn-primary" ng-click="authService.logout()">
                     <i class="glyphicon glyphicon-off glyphicon-white"></i> Sign out</a>
@@ -137,8 +141,8 @@
      <div class="well">
 					  <div class="modal-content">
             <div class="modal-header">
-                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
-                <h4 class="modal-title">Login</h4>
+            
+             <h4 class="modal-title">Login</h4>
             </div>
             <div class="modal-body">
 
@@ -157,9 +161,13 @@
              
             </div>
             <div class="modal-footer">
+            	<a class="btn btn-default" data-dismiss="modal" href='#/register'>
+                    <i
+                            class="glyphicon glyphicon-user glyphicon-white"></i> Sign Up</a>
                 <a class="btn btn-success" data-dismiss="modal" ng-click="authService.login(username, password)">
                     <i
                             class="glyphicon glyphicon-user glyphicon-white"></i> Log in</a>
+
             </div>
         </div>
 
@@ -172,6 +180,72 @@
 
 </script>
 
+<!-- CACHE FILE: users.signup.html -->
+<script type="text/ng-template" id="users.signup.html">
+
+	<div class="container" fade-in>
+
+    <div style="padding-top: 2em;">
+
+    
+
+            <div class="page-header">
+             </div>
+     <div class="well">
+					  <div class="modal-content">
+            <div class="modal-header">
+                 <h4 class="modal-title">Register | get started..</h4>
+            </div>
+            <div class="modal-body">
+            	 <div class="container form-row">
+			
+                <span id="register-username">Username</span>
+                <input ng-model="user.username" type="text" placeholder="username" name='username' class="form-control" required>
+               
+                </div>
+			    <div class="container form-row">
+			
+                <span id="register-username">Email Address</span>
+                <input ng-model="user.email" type="email" placeholder="email address" name='email address' class="form-control" required>
+               
+                </div>
+
+			    <div class="container form-row">
+			
+                <span id="register-team">Team</span>
+                <input ng-model="team.name" type="text" placeholder="Team" name='team' class="form-control" required>
+               
+                </div>
+
+                <div class="container form-row">
+              
+                <span id="register-password">Password</span>
+                   <input ng-model="user.password" type="password" placeholder="Password" name='password' class="form-control"  required>
+              	</div>	
+                <div class="container form-row">
+              
+                <span id="register-password">Password</span>
+                   <input type="password" name="confirmPassword" class="form-control" 
+                   ng-model="cpassword" 
+                   required compare-to="user.password" required/>
+              	</div>	
+                
+            </div>
+            <div class="modal-footer">
+                <a class="btn btn-success" data-dismiss="modal" ng-click="save()" ng-disabled="isClean() || $form.invalid" >
+                    <i
+                            class="glyphicon glyphicon-user glyphicon-white"></i> Register</a>
+            </div>
+        </div>
+
+</div>
+
+</div>
+
+</div>
+
+
+</script>
 
 <!-- CACHE FILE: users.list.html -->
 <script type="text/ng-template" id="users.list.html">
@@ -225,10 +299,11 @@
     
 
             <div class="page-header">
-                <h1>User</h1>
+                <h1>Join SHED</h1>
              </div>
              <div class="well">
 	<hr/>
+	{{user}}
 	<form name="myForm" class="form-horizontal">
 
 	  <div class="container form-row" ng-class="{error: myForm.username.$invalid}">
@@ -243,7 +318,7 @@
 			<label class="control-label" for="email">Email Address</label>
 
 			<div class="controls">
-				<input name="email" ng-model="user.email" required type="email" class="form-control"></input>
+				<input name="email" ng-model="user.email" value='{{$scope.user.email}}' required type="email" class="form-control"></input>
 			</div>
 		</div>
 		<div class="container form-row" ng-class="{error: myForm.password.$invalid}">
@@ -273,6 +348,39 @@
 
 </script>
 
+
+<!-- CACHE FILE: users.invite.html -->
+<script type="text/ng-template" id="users.invite.html">
+	<div class="container" fade-in>
+
+    <div style="padding-top: 2em;">
+
+    
+
+            <div class="page-header">
+                <h1>Invite User</h1>
+             </div>
+             <div class="well">
+	<hr/>
+	<form name="myForm" class="form-horizontal">
+
+	  <div class="animated zoomInRight">
+				          <input type="email" ng-model="invitation.email"  class="form-control" placeholder="user email address" autofocus />
+				      	
+		<br>
+		<button ng-click="invite()" ng-disabled="isClean() || $form.invalid"
+		        class="btn btn-success"> Invite User
+		</button>
+	</div>
+	</form>
+</div>
+
+</div>
+
+</div>
+
+
+</script>
 
 
 
@@ -399,6 +507,8 @@
                 	
                 <div ng-if="book.borrowedby == authService.currentUser()">
                 	 <button class='btn btn-success' ng-click='return()'> Return  Book </button> 
+                </div>
+                <div>
                 	      <div class="page-header">
                				 <h3>Review Book</h3>
              			  </div>
