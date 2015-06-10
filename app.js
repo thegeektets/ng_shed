@@ -209,15 +209,13 @@ shed.factory('AuthService',
     function (Restangular,$rootScope,$http) {
         var currentUser = null;
         var authorized = false;
-
-        // initMaybe it wasn't meant to work for mpm?ial state says we haven't logged in or out yet...
-        // this tells us we are in public browsing
         var initialState = true;
-
         var userid = null;
         var user_type = null;
-
         var currentTeam = null;
+        var invitedby = null;
+        var teamId = null;
+
 
         return {
             initialState:function () {
@@ -242,8 +240,8 @@ shed.factory('AuthService',
                 			  	    authorized = true;
                 	   			   initialState = false;
                              user_type = user.user_type;
-
-                            console.log('logged in');
+                             invitedby = user.invitedby;
+                             console.log('logged in');
                             break;
                 			  }
                 			  else{
@@ -252,22 +250,62 @@ shed.factory('AuthService',
                 			  }
 
                 		}
+              if(authorized == true){
                 if(user_type == 'admin'){ 
       					$http.get('https://api.mongolab.com/api/1/databases/shed_database/collections/teams/?apiKey=Iwy7zOOBBd6lUzN5jBhLNhv68Wv8UfUl')
                 .success(function(data){
                     $rootScope.teams = data;
                     for(i = $rootScope.teams.length -1;i >= 0 ; i--){
                           team = $rootScope.teams[i];
-                        if(email === team.name  ){
-                             currentTeam = name;
-                            
+                        if(currentUser == team.admin  ){
+                              teamId = team._id.$oid;
+                              currentTeam = team.name;
+                              /*
+                                $rootScope.user = $http.get('https://api.mongolab.com/api/1/databases/shed_database/collections/users/'+userid+'/?apiKey=Iwy7zOOBBd6lUzN5jBhLNhv68Wv8UfUl');
+                                $rootScope.user.teamid = team._id.$oid;
+                                $http.put('https://api.mongolab.com/api/1/databases/shed_database/collections/users/'+userid+'/?apiKey=Iwy7zOOBBd6lUzN5jBhLNhv68Wv8UfUl',$rootScope.user);
+                                */
+                              
+                               break; 
+
                         }
                         
 
                     }
                 });
+              }else{
+      			     $http.get('https://api.mongolab.com/api/1/databases/shed_database/collections/teams/?apiKey=Iwy7zOOBBd6lUzN5jBhLNhv68Wv8UfUl')
+                .success(function(data){
+                    $rootScope.teams = data;
+                  $http.get('https://api.mongolab.com/api/1/databases/shed_database/collections/users/'+invitedby+'/?apiKey=Iwy7zOOBBd6lUzN5jBhLNhv68Wv8UfUl').success(function(data){
+
+                        admin = data;
+
+                       for(i = $rootScope.teams.length -1;i >= 0 ; i--){
+                          team = $rootScope.teams[i];
+                        if(admin.username == team.admin  ){
+                             teamId = team._id.$oid;
+                              currentTeam = team.name;
+                              /*
+                                $rootScope.user = $http.get('https://api.mongolab.com/api/1/databases/shed_database/collections/users/'+userid+'/?apiKey=Iwy7zOOBBd6lUzN5jBhLNhv68Wv8UfUl');
+                                $rootScope.user.teamid = team._id.$oid;
+                                $http.put('https://api.mongolab.com/api/1/databases/shed_database/collections/users/'+userid+'/?apiKey=Iwy7zOOBBd6lUzN5jBhLNhv68Wv8UfUl',$rootScope.user);
+                               */
+                              
+                              break;
+                        }
+                        
+
+                    }
+                  });
+
+                  
+   
+                });
+             	    	
               }
-      					//});
+            }
+        
         });
                  
                 
@@ -285,6 +323,12 @@ shed.factory('AuthService',
             currentEmail:function(){
             	 return email;
             },
+            currentUsertype:function(){
+              return user_type;
+            },
+            currentInvitedby:function(){
+              return invitedby;
+            },
             userId:function(){
             	 return userid;
             },
@@ -292,10 +336,13 @@ shed.factory('AuthService',
             authorized:function () {
                 return authorized;
             },
-            
             currentTeam:function(){
                 return currentTeam;
             },
+            teamId:function(){
+                return teamId;
+            },
+            
             isAuthenticated: function() {
                 
               if (authorized) {
@@ -393,9 +440,95 @@ function FileUploadCtrl(scope) {
 
 
 
-function ListCtrl($scope, Restangular) {
-	$scope.users = Restangular.all("users").getList().$object;
+function ListCtrl($scope, Restangular,$rootScope,$http) {
+$scope.users =[];
+
+  if($rootScope.authService.currentUsertype() == 'admin'){ 
+
+   $http.get('https://api.mongolab.com/api/1/databases/shed_database/collections/users/?apiKey=Iwy7zOOBBd6lUzN5jBhLNhv68Wv8UfUl&q={"invitedby":"'+$rootScope.authService.userId()+'"}').success(function(data){
+     $scope.people = data;
+
+     console.log(data);
+ });
+
+        $http.get('https://api.mongolab.com/api/1/databases/shed_database/collections/users/'+$rootScope.authService.userId()+'/?apiKey=Iwy7zOOBBd6lUzN5jBhLNhv68Wv8UfUl').success(function(data){ 
+       $scope.users= angular.extend(data,$scope.people);
+
+      console.log($scope.users );
+
+     });
+
+   
+
+    
+
 	//$scope.groups = Restangular.all("groups").getList().$object;
+  }
+  else{
+      currentUsertype
+  $http.get('https://api.mongolab.com/api/1/databases/shed_database/collections/users/?apiKey=Iwy7zOOBBd6lUzN5jBhLNhv68Wv8UfUl&q={"invitedby":"'+$rootScope.authService.currentInvitedby()+'"}').success(function(data){     $scope.people   = data; console.log(data);});
+  $http.get('https://api.mongolab.com/api/1/databases/shed_database/collections/users/'+$rootScope.authService.currentInvitedby()+'/?apiKey=Iwy7zOOBBd6lUzN5jBhLNhv68Wv8UfUl').success(function(data){ 
+       $scope.users= angular.extend(data,$scope.people);
+
+  });
+};
+
+}
+
+function ListBookCtrl($scope, $location, Restangular,$rootScope,$http) {
+
+$scope.books = {};
+
+   if($rootScope.authService.currentUsertype() == 'admin'){ 
+                
+                $http.get('https://api.mongolab.com/api/1/databases/shed_database/collections/teams/?apiKey=Iwy7zOOBBd6lUzN5jBhLNhv68Wv8UfUl')
+                .success(function(data){
+                    $rootScope.teams = data;
+                    for(i = $rootScope.teams.length -1;i >= 0 ; i--){
+                         team = $rootScope.teams[i];
+                        if($rootScope.authService.currentUser() == team.admin  ){
+                           
+                           $http.get('https://api.mongolab.com/api/1/databases/shed_database/collections/books/?apiKey=Iwy7zOOBBd6lUzN5jBhLNhv68Wv8UfUl&q={"teamid":"'+team._id.$oid+'"}').success(function(data){
+                              $scope.books = data;
+                               console.log($scope.books);
+                           });   
+                               
+                               break; 
+
+                        }
+                        
+
+                    }
+                });
+              }else{
+                 $http.get('https://api.mongolab.com/api/1/databases/shed_database/collections/teams/?apiKey=Iwy7zOOBBd6lUzN5jBhLNhv68Wv8UfUl')
+                .success(function(data){
+                    $rootScope.teams = data;
+                       $http.get('https://api.mongolab.com/api/1/databases/shed_database/collections/users/'+$rootScope.authService.currentInvitedby()+'/?apiKey=Iwy7zOOBBd6lUzN5jBhLNhv68Wv8UfUl').success(function(data){
+                            admin = data;
+                               for(i = $rootScope.teams.length -1;i >= 0 ; i--){
+                          team = $rootScope.teams[i];
+                        if(admin.username == team.admin  ){
+                                   
+                           $http.get('https://api.mongolab.com/api/1/databases/shed_database/collections/books/?apiKey=Iwy7zOOBBd6lUzN5jBhLNhv68Wv8UfUl&q={"teamid":"'+team._id.$oid+'"}').success(function(data){
+                              $scope.books = data;
+                               console.log($scope.books);
+                           });   
+                                           
+                              break;
+                        }
+                        
+
+                    }
+                       });
+                  
+                 
+                });
+                    
+              }
+
+
+  
 }
 function InvCtrl($scope, $location, Restangular,$rootScope,$http) {
 
@@ -446,7 +579,7 @@ function RegnwCtrl($scope, $location, Restangular,$http, $route){
            
 
 
-            $http.get('https://api.mongolab.com/api/1/databases/shed_database/collections/users/?apiKey=Iwy7zOOBBd6lUzN5jBhLNhv68Wv8UfUl&q={"email":"'+$route.current.params.email+'","invitedby":"'+$route.current.params.invite+'"}&f')
+            $http.get('https://api.mongolab.com/api/1/databases/shed_database/collections/users/?apiKey=Iwy7zOOBBd6lUzN5jBhLNhv68Wv8UfUl&q={"email":"'+$route.current.params.email+'","invitedby":"'+$route.current.params.invite+'"}')
                 .success(function(data){
                  
                  $scope.user = data;
@@ -455,13 +588,13 @@ function RegnwCtrl($scope, $location, Restangular,$http, $route){
     
 
     $scope.save = function () {
-           var data = {
-           // json: JSON.stringify({
-                password: $scope.user.password,
-                username: $scope.user.username
-          //  })
-         };
-        $http.post('https://api.mongolab.com/api/1/databases/shed_database/collections/users/?apiKey=Iwy7zOOBBd6lUzN5jBhLNhv68Wv8UfUl&q={"email":"'+$route.current.params.email+'","invitedby":"'+$route.current.params.invite+'"}&f',data).success(function(data, status) {
+         
+        $http({
+          url :'https://api.mongolab.com/api/1/databases/shed_database/collections/users/?apiKey=Iwy7zOOBBd6lUzN5jBhLNhv68Wv8UfUl&q={"email":"'+$route.current.params.email+'","invitedby":"'+$route.current.params.invite+'"}',
+
+          method :"PUT",
+          data :{"password":$scope.user.password,"username":$scope.user.username,"invitedby":$route.current.params.invite,"email":$route.current.params.email,"user_type":"user" }
+        }).success(function(data, status) {
            
    
       $location.path('/login');
@@ -502,11 +635,9 @@ function CreateCtrl($scope, $location, Restangular) {
 }
 
 
-function ListBookCtrl($scope, Restangular) {
-	$scope.books = Restangular.all("books").getList().$object;
-}
 
-function AddBookCtrl ($scope, $location, Restangular,$http) {
+
+function AddBookCtrl ($scope, $location, Restangular,$http,$rootScope) {
   $scope.addmaunally = false;
 
 $scope.manual = function(){
@@ -540,9 +671,16 @@ function fetch() {
   $scope.book.dateofpublication = $scope.details.items['0'].volumeInfo.publishedDate;
   $scope.book.pic = $scope.details.items['0'].volumeInfo.imageLinks.thumbnail;
   $scope.book.category = $scope.details.items['0'].volumeInfo.categories['0'];
-          
-  $scope.book.librarytype = 'Personal';
+  $scope.book.teamid = $rootScope.authService.teamId();
+  if($rootScope.authService.currentUsertype() == 'admin'){
 
+      $scope.book.librarytype = $rootScope.authService.currentTeam()+' Library';
+  
+  }
+  else{
+     $scope.book.librarytype = 'Personal Library';
+  }
+  
 
   });
 
