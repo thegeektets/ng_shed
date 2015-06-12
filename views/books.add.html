@@ -19,11 +19,19 @@
 				          <input type="text" ng-model="search" ng-change="change()" onclick="select()" class="form-control" placeholder="search book" autofocus />
 				          <span class="input-group-addon bar-style"><i class="glyphicon glyphicon-search"></i></span>
 				        </div>
-
-				    <div ng-if="!details">
+				    <div style="text-align:center;padding-top:10px"> 	{{$scope.addmanually}} {{$scope.book}}	</div>
+				    <div ng-if="!details" style="text-align:center;padding-top:10px">
 					  Loading results...
 					</div>
-						<div ng-if="details">
+					<div ng-if="!details" style="text-align:center;padding-top:10px">
+					  No results found.
+					</div>
+					<div ng-if="details" style="text-align:center;padding-top:10px">
+					  {{details.totalItems}} results found.
+					</div>
+					
+
+					<div ng-if="details">
 					  <img ng-src="{{ details.items['0'].volumeInfo.imageLinks.thumbnail }}" class="thumbnail animated flip movie-poster">
 
 					  <span class="span-outer">
@@ -53,9 +61,8 @@
 					  
 					</div>
 
-					<div ng-if="!details">
-					  No results found.
-					</div>
+
+
 				</div>
 
 			</div>
@@ -125,11 +132,14 @@
 			</select>
 			</div>
 		</div>
-
+		   <div class="container form-row" ng-if='details'>
+			        Number of Copies:&nbsp;&nbsp;&nbsp;
+  				<input class="form-control" type="text" name="copies" ng-model="book.copies" placeholder="Copies" ng-required= "true" ng-minlength= "2" />
+		</div>	
 			<div class="container input-group form-row " style="padding:5px">
-					<input type= "button" ng-click="manual()" ng-if='addmanually' value="Add Manually" class="btn btn-success" style="margin:2px"> </input>
+					<input type= "button" ng-click="manual()" ng-if='details.totalItems < 1' value="Add Manually" class="btn btn-success" style="margin:2px"> </input>
 					
-					<input type= "button" ng-click="save()" ng-disabled="isClean() || $form.invalid" ng-if='details' value="Save Book" class="btn btn-success" style="margin:2px"> </input>
+					<input ng-if='details' type= "button" ng-click="save()" ng-disabled="isClean() || $form.invalid"  value="Save Book" class="btn btn-success" style="margin:2px"> </input>
 					<!--
 					<input type= "button" ng-click="destroy()" ng-if='' value="Remove Book" class="btn btn-danger" style="margin:2px"> </input>
 					-->

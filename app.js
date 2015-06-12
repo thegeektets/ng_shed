@@ -43,7 +43,7 @@ var shed = angular.module('shed', ['restangular', 'ngRoute','angularFileUpload']
 			}).
 			when('/author/:book.author', {
 				controller: AthrBookCtrl,
-				templateUrl: 'book.view.html',
+				templateUrl: 'views/book.view.html',
          resolve: {
 					book: function (Restangular, $route) {
 						return Restangular.one('books', $route.current.params.author).get();
@@ -54,7 +54,7 @@ var shed = angular.module('shed', ['restangular', 'ngRoute','angularFileUpload']
 			}).
 			when('/viewbook/:bookId', {
 				controller: ViewBookCtrl,
-				templateUrl: 'book.view.html',
+				templateUrl: 'views/book.view.html',
        
 				resolve: {
 					book: function (Restangular, $route) {
@@ -114,7 +114,7 @@ var shed = angular.module('shed', ['restangular', 'ngRoute','angularFileUpload']
     $rootScope.$on( "$routeChangeStart", function(event, next, current) {
       if (!$rootScope.authService.authorized()) {
           console.log('login required');
-        if ( next.templateUrl === "users.login.html" || next.templateUrl === "users.signup.html"|| next.templateUrl === "users.detail.html") {
+        if ( next.templateUrl === "views/users.login.html" || next.templateUrl === "views/users.signup.html"|| next.templateUrl === "views/users.detail.html") {
         } else {
           $location.path("/login");
         }
