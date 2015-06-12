@@ -3,19 +3,28 @@
 <html>
 
 <head>
-	<meta charset="utf-8"/>
-	<title>SHED</title>
-	<script>document.write('<base href="' + document.location + '" />');</script>
-	
-	<script src="lib/angular/angular.js"></script>
-    <script src="js/angular-file-upload.js"></script> 
-    
-    <script src="lib/angular/angular-route.js"></script>
-    
-  	<script src="http://cdnjs.cloudflare.com/ajax/libs/underscore.js/1.4.4/underscore-min.js"></script>
-	<script type="text/javascript" src="restangular.js"></script>
-	<script src="app.js"></script>
+  <meta charset="utf-8"/>
+  <title>SHED</title>
   
+  <script>document.write('<base href="' + document.location + '" />');</script>
+  <script src="lib/angular/angular.js"></script>
+  <script src="js/angular-file-upload.js"></script> 
+  <script src="lib/angular/angular-route.js"></script>
+  <script src="http://cdnjs.cloudflare.com/ajax/libs/underscore.js/1.4.4/underscore-min.js"></script>
+  <script type="text/javascript" src="restangular.js"></script>
+  <script src="app.js"></script>
+  
+  <!-- the views -->
+  <script src="views/books.add.html" type="text/ng-template" id="books.add.html"></script>
+  <script src="views/book.view.html" type="text/ng-template" id="book.view.html"></script>
+  <script src="views/books.borrowed.html" type="text/ng-template" id="books.borrowed.html"></script>
+  <script src="views/books.list.html" type="text/ng-template" id="books.list.html"></script>
+  <script src="views/users.detail.html" type="text/ng-template" id="users.detail.html"></script>
+  <script src="views/users.invite.html" type="text/ng-template" id="users.invite.html"></script>
+  <script src="views/users.list.html" type="text/ng-template" id="users.list.html"></script>
+  <script src="views/users.login.html" type="text/ng-template" id="users.login.html"></script>
+  <script src="views/users.signup.html" type="text/ng-template" id="users.signup.html"></script>
+
     <link rel="stylesheet" href="css/vendor/bootstrap/bootstrap.min.css">
     <link rel="stylesheet" href="css/vendor/ng-grid/ng-grid.css">
     <link href="css/vendor/angularstrap/styles.css" rel="stylesheet">
@@ -39,7 +48,7 @@
       </button>
 
        <a class="navbar-brand" href="#">SHED</a>
-       	</div>
+        </div>
 
        </div>
 
@@ -49,9 +58,12 @@
         <li class=""><a href="#/addbook">Add Book <span class="sr-only">(current)</span></a></li>
       
         <li class=""><a href="#/listusers">Library Users <span class="sr-only">(current)</span></a></li>
-           
+                <li ng-if='authService.currentUsertype() == "admin"'>
+        <a href="#/borrowed">Borrowed Books <span class="sr-only">(current)</span></a></li>
+
          <li ng-if='authService.currentUsertype() == "admin"'>
         <a href="#/invite">Invite Users <span class="sr-only">(current)</span></a></li>
+
         </span>
        
 
@@ -61,7 +73,7 @@
 
 
         <div class="nav navbar-form pull-right">
-        	
+          
             <div ng-show="!authService.isLoggedIn()">
                 <a href="#loginModal" role="button" class="btn btn-primary" data-toggle="modal">
                     <i class="glyphicon glyphicon-user glyphicon-white"></i> Sign in</a>
@@ -103,8 +115,8 @@
             </div>
             <div class="modal-body">
 
-			    <div class="container form-row">
-			
+          <div class="container form-row">
+      
                 <span id="login-username">Username</span>
                 <input ng-model="username" type="text" placeholder="Username" name='username' class="form-control">
                
@@ -113,7 +125,7 @@
               
                 <span id="login-password">Password</span>
                    <input ng-model="password" type="password" placeholder="Password" name='password' class="form-control">
-              	</div>	
+                </div>  
                 <a href="#">Forgot password?</a>
              
             </div>
@@ -131,608 +143,25 @@
 
 
 
-<!-- CACHE FILE: users.login.html -->
-<script type="text/ng-template" id="users.login.html">
 
-	<div class="container" fade-in>
-
-    <div style="padding-top: 2em;">
-
-    
-
-            <div class="page-header">
-             </div>
-     <div class="well">
-					  <div class="modal-content">
-            <div class="modal-header">
-            
-             <h4 class="modal-title">Login</h4>
-            </div>
-            <div class="modal-body">
-
-			    <div class="container form-row">
-			
-                <span id="login-username">Username</span>
-                <input ng-model="username" type="text" placeholder="Username" name='username' class="form-control">
-               
-                </div>
-                <div class="container form-row">
-              
-                <span id="login-password">Password</span>
-                   <input ng-model="password" type="password" placeholder="Password" name='password' class="form-control">
-              	</div>	
-                <a href="#">Forgot password?</a>
-             
-            </div>
-            <div class="modal-footer">
-            	<a class="btn btn-default" data-dismiss="modal" href='#/register'>
-                    <i
-                            class="glyphicon glyphicon-user glyphicon-white"></i> Sign Up</a>
-                <a class="btn btn-success" data-dismiss="modal" ng-click="authService.login(username, password)">
-                    <i
-                            class="glyphicon glyphicon-user glyphicon-white"></i> Log in</a>
-
-            </div>
-        </div>
-
-</div>
-
-</div>
-
-</div>
-
-
-</script>
-
-<!-- CACHE FILE: users.signup.html -->
-<script type="text/ng-template" id="users.signup.html">
-
-	<div class="container" fade-in>
-
-    <div style="padding-top: 2em;">
-
-    
-
-            <div class="page-header">
-             </div>
-     <div class="well">
-					  <div class="modal-content">
-            <div class="modal-header">
-                 <h4 class="modal-title">Register | get started..</h4>
-            </div>
-            <div class="modal-body">
-            	 <div class="container form-row">
-			
-                <span id="register-username">Username</span>
-                <input ng-model="user.username" type="text" placeholder="username" name='username' class="form-control" required>
-               
-                </div>
-			    <div class="container form-row">
-			
-                <span id="register-username">Email Address</span>
-                <input ng-model="user.email" type="email" placeholder="email address" name='email address' class="form-control" required>
-               
-                </div>
-
-			    <div class="container form-row">
-			
-                <span id="register-team">Team</span>
-                <input ng-model="team.name" type="text" placeholder="Team" name='team' class="form-control" required>
-               
-                </div>
-
-                <div class="container form-row">
-              
-                <span id="register-password">Password</span>
-                   <input ng-model="user.password" type="password" placeholder="Password" name='password' class="form-control"  required>
-              	</div>	
-                <div class="container form-row">
-              
-                <span id="register-password">Password</span>
-                   <input type="password" name="confirmPassword" class="form-control" 
-                   ng-model="cpassword" 
-                   required compare-to="user.password" required/>
-              	</div>	
-                
-            </div>
-            <div class="modal-footer">
-                <a class="btn btn-success" data-dismiss="modal" ng-click="save()" ng-disabled="isClean() || $form.invalid" >
-                    <i
-                            class="glyphicon glyphicon-user glyphicon-white"></i> Register</a>
-            </div>
-        </div>
-
-</div>
-
-</div>
-
-</div>
-
-
-</script>
-
-<!-- CACHE FILE: users.list.html -->
-<script type="text/ng-template" id="users.list.html">
-
-	<div class="container" fade-in>
-
-    <div style="padding-top: 2em;">
-
-    
-
-            <div class="page-header">
-                <h1>Users List</h1>
-             </div>
-     <div class="well">
-	<input type="text" ng-model="search" class="search-query" placeholder="Search">
-
-	<table class="table table-hover">
-		<thead>
-		<tr>
-			<th>Username</th>
-			<th>Email Address</th>
-      <th>User Type</th>
-			<th ng-if='authService.currentUsertype() == "admin"'><a class="btn btn-success" href="#/new"> New User</a></th>
-		</tr>
-		</thead>
-		<tbody>
-  
-    <div ng-if= 'users.length > 1'>
-		<tr ng-repeat="user in users " ng-show="user._id.$oid">
-
-			<td>  {{user.Username}}</td>
-			<td>{{user.email}}</td>
-      <td>{{user.user_type}}</td>
-      <td style='display:none'>{{user.invitedby}}</td>
-      <td style='display:none'>{{user._id.$oid}}</td>
-			<td ng-if='authService.currentUsertype() == "admin"'>
-				<a class="btn btn-primary" href="#/edit/{{user._id.$oid}}"> Edit User</a>
-			</td>
-		</tr>
-    </div>
-    <div ng-if ='(users.length < 2)'>
-      <tr ng-show="users._id.$oid">
-      <td>{{users.username}}</td>
-      <td>{{users.email}}</td>
-      <td>{{users.user_type}}</td>
-      <td style='display:none'>{{users.invitedby}}</td>
-      <td style='display:none'>{{users._id.$oid}}</td>
-      <td ng-if='authService.currentUsertype() == "admin"'>
-        <a class="btn btn-primary" href="#/edit/{{users._id.$oid}}"> Edit User</a>
-      </td>
-    </tr>
-    </div>
-
-		</tbody>
-	</table>
-
-</div>
-
-</div>
-
-</div>
-
-
-</script>
-
-<!-- CACHE FILE: users.detail.html -->
-<script type="text/ng-template" id="users.detail.html">
-	<div class="container" fade-in>
-
-    <div style="padding-top: 2em;">
-
-    
-
-            <div class="page-header">
-                <h1>Join SHED</h1>
-             </div>
-             <div class="well">
-	<hr/>
-	{{user._id.$oid}}
-	<form name="myForm" class="form-horizontal">
-
-	  <div class="container form-row" ng-class="{error: myForm.username.$invalid}">
-			<label class="control-label" for="username">Username</label>
-
-			<div class="control-group">
-				<input type="text" name="username" ng-model="user.username" required class="form-control">
-			</div>
-		</div>
-
-		<div class="container form-row" ng-class="{error: myForm.email.$invalid}">
-			<label class="control-label" for="email">Email Address</label>
-
-			<div class="controls">
-				<input name="email" ng-model="user.email" value='{{$scope.user.email}}' required type="email" class="form-control"></input>
-			</div>
-		</div>
-		<div class="container form-row" ng-class="{error: myForm.password.$invalid}">
-			<label class="control-label" for="password">Password</label>
-
-			<div class="controls">
-				<input name="password" ng-model="user.password" required type="password" class="form-control"></input>
-			</div>
-		</div>
-
-		
-
-		<br>
-		<button ng-click="save()" ng-disabled="isClean() || $form.invalid"
-		        class="btn btn-success">Save
-		</button>
-		<button ng-click="destroy()"
-		        ng-show="user._id" class="btn btn-danger">Delete
-		</button>
-	</form>
-</div>
-
-</div>
-
-</div>
-
-
-</script>
-
-
-<!-- CACHE FILE: users.invite.html -->
-<script type="text/ng-template" id="users.invite.html">
-	<div class="container" fade-in>
-
-    <div style="padding-top: 2em;">
-
-    
-
-            <div class="page-header">
-                <h1>Invite User</h1>
-             </div>
-             <div class="well">
-	<hr/>
-	<form name="myForm" class="form-horizontal">
-
-	  <div class="animated zoomInRight">
-				          <input type="email" ng-model="invitation.email"  class="form-control" placeholder="user email address" autofocus />
-				      	
-		<br>
-		<button ng-click="invite()" ng-disabled="isClean() || $form.invalid"
-		        class="btn btn-success"> Invite User
-		</button>
-	</div>
-	</form>
-</div>
-
-</div>
-
-</div>
-
-
-</script>
-
-
-
-<!-- CACHE FILE: books.list.html -->
-<script type="text/ng-template" id="books.list.html">
-	<div class="container" fade-in>
-
-    <div style="padding-top: 2em;">
-
-    
-
-            <div class="page-header">
-                <h1>Books List</h1>
-             </div>
-     <div class="well">
-	<input type="text" name="search" id="search" ng-model="search" class="search-query" placeholder="Search">
-	
-	<div style="float:right">
-	Order By:
-	<select ng-model="ordertype">
-		<option value="title" selected='true' class='form-control'>Title</option>
-		<option value="author" selected='true' class='form-control'>Author</option>
-		 <option value="category" selected='true' class='form-control'>Category</option>
-		 <option value="teamreference" selected='true' class='form-control'>Team</option>
-		
-	</select>
-	</div>
-	<hr/>
-	<h3 style="text-align:center"><span >{{search}}</span></h3>
-	<div>
-	<ul class="list-group">
-		<li class="list-group-item" ng-repeat="book in books | filter:search | orderBy:ordertype | filter:filters  " ng-show="book._id.$oid">
-			
-			<h3> Book Title :{{book.title}} </h3>
-			 <div class = 'row'>
-			 <div class="col-md-2">
-	    	 <img ng-if='book.image'ng-src='img/{{book.image.replace("C:\\fakepath\\", "")}}' alt="image" width='100%'/>
-	    	 <img ng-if='book.pic'ng-src='{{book.pic}}' alt="image" width='100%'/>
-
-
-	         </div>
-	         <div class="col-md-10">
-			<h4> Author : <span style="color:#a91b0c" ng-click="$parent.filters = {author: book.author}">{{book.author}}</span> </h4>
-			<h5> Category : {{book.category}} </h5>
-			<h5> Publication Date : {{book.dateofpublication}} </h5>
-			<p>Description : {{book.description}}</p>
-			</div>
-			</div>
-
-			
-			<a href="#/viewbook/{{book._id.$oid}}" class="btn btn-primary"> View Book </a>
-			
-			
-		
-		</ul>
-	</div>
-</div>
-
-</div>
-
-</div>
-	
-</script>
-
-<!-- CACHE FILE: book.view.html -->
-<script type="text/ng-template" id="book.view.html">
-	<div class="container" fade-in>
-
-    <div style="padding-top: 2em;">
-
-    
-
-            <div class="page-header">
-                <h1>Book View</h1>
-             </div>
-     <div class="well">
-	<hr/>
-	<div>
-	<ul class="list-group">
-		<li class="list-group-item">
-		<div class="row">
-		<div class="col-md-6">
-			<h3> Book Title :{{book.title}} </h3>
-			<h4> Author : {{book.author}} </h4>
-			<h4> Publisher : {{book.publisher}} </h4>
-			<h4> Date of Publication : {{book.dateofpublication}} </h4>
-			<h5> Category : {{book.category}} </h5>
-			<h5> Team Reference : {{book.teamreference.id}} </h5>
-			<h5> Library Type : {{book.librarytype.desc}} </h5>
-			<p>Description : {{book.description}}</p>
-	    </div>
-	
-       <div class="col-md-6">
-            <img ng-if ='book.image' ng-src='img/{{book.image.replace("C:\\fakepath\\", "")}}' alt="image" width='100%'/>
-	    	<img ng-if='book.pic' ng-src='{{book.pic}}' alt="image" width='100%'/>
-	    </div>
-	    </div>
-	    <div class="row" style="padding:20px">
-	    <a href="#/viewbook/{{relatedbook._id.$oid}}" ng-repeat="relatedbook in relatedbooks | orderBy:ordertype | filter :book.category " ng-show="relatedbook._id.$oid">
-      		  <img ng-if='relatedbook.image' ng-src='img/{{relatedbook.image.replace("C:\\fakepath\\", "")}}' alt="image" width='15%' style='float:left'/>
-      		  <img ng-if='relatedbook.pic' ng-src='{{relatedbook.pic}}' alt="image" width='15%' style='float:left'/>
-      		
-	      
-    	</a>
-	    </div>
-	   <div ng-show="authService.isLoggedIn()">
-            	
-            	<div ng-if="book.status == 'borrowed'">
-
-                  <span style="color:#286100">This book has been borrowed by <a href='mailto:{{book.borrowedbyemail}}'>{{book.borrowedby}}</a></span>
-	   
-                </div>
-              	
-              	<div class="page-header">
-               				 <h3>Book Reviews</h3>
-             	 </div>
-             	 <div class="well">
-				
-                 <div class="panel panel-default" ng-repeat ="review in reviews.slice().reverse() | filter:{ bookid: book._id.$oid}:true | limitTo:5" ng-show="review._id.$oid">
- 								 <div class="panel-heading"> <i class="glyphicon glyphicon-user glyphicon-white"></i> User : {{review.user}}</div>
-								 <div class="panel-body">Review : <p>{{review.comment}}</p></div>
-				</div>
-                </div>
-                	
-                <div ng-if="book.borrowedby == authService.currentUser()">
-                	 <button class='btn btn-success' ng-click='return()'> Return  Book </button> 
-                </div>
-                <div>
-                	      <div class="page-header">
-               				 <h3>Review Book</h3>
-             			  </div>
-                	 <div class="well">
-						<form class="form-horizontal" name="myForm">
-									<div class="container form-row">
-			       					 Username:&nbsp;&nbsp;&nbsp;
-			       					 {{authService.currentUser()}}
-									 </div>
-									<div class="container form-row">
-			       					 Review:&nbsp;&nbsp;&nbsp;
-								<textarea ng-model="review.comment" class="form-control"> </textarea>
-									 </div>
-									<div style="padding:10px" class="container form-row">
-								<button  class="btn btn-success" ng-click="reviewbook(authService.currentUser())"> Review Book</button>
-									</div>
-                		
-						</form>
-					  </div>
-                </div>
-                <div ng-if="book.status != 'borrowed'">
-                	<button class='btn btn-success' ng-click='borrow(authService.currentUser(), authService.currentEmail())'>
-                		Borrow  Book
-                	</button>
-
-                </div>
-              </div>  		
-					   
-               
-
-     </div>
-       
-        <div ng-show="!authService.isLoggedIn()">
-            
-           <span style="color:#d9230f;padding-bottom:10px;view:block"> Please Login to Borrow Book</span>
-        </div>
-
-        </li>
-
-
-		</ul>
-	</div>
-</div>
-
-</div>
-
-</div>
-	
-</script>
-<script type="text/ng-template" id="books.add.html">
-	<div class="container" fade-in>
-
-    <div style="padding-top: 2em;">
-
-    
-
-            <div class="page-header">
-                <h1>Book</h1>
-             </div>
-     <div class="well">
-	<hr/>
-	<form name="myform"  novalidate class="container css-form"> 
-
-
-			<div class='container form-row'>
-					<div class="animated zoomInRight">
-				        <div class="input-group search-bar">
-				          <input type="text" ng-model="search" ng-change="change()" onclick="select()" class="form-control" placeholder="search book" autofocus />
-				          <span class="input-group-addon bar-style"><i class="glyphicon glyphicon-search"></i></span>
-				        </div>
-
-				    <div ng-if="!details">
-					  Loading results...
-					</div>
-						<div ng-if="details">
-					  <img ng-src="{{ details.items['0'].volumeInfo.imageLinks.thumbnail }}" class="thumbnail animated flip movie-poster">
-
-					  <span class="span-outer">
-					    <a href="#" target="_blank">{{ details.items['0'].volumeInfo.title }}</a>
-					    <h5>{{details.items['0'].volumeInfo.subtitle}}</h5>
-					  </span> 
-					  <p><strong>Published on:</strong> {{ details.items['0'].volumeInfo.publishedDate }} </p>
-					  <p class="outer-p">
-					    <div class="inner-p">
-					      <span class="label label-primary">Publisher :</span> {{ details.items['0'].volumeInfo.publisher }}
-					    </div>
-					    <div class="inner-p">
-					      <span class="label label-primary">Author :</span> {{ details.items['0'].volumeInfo.authors['0'] }}
-					    </div>
-					    <div class="inner-p">
-					      <span class="label label-primary">Type :</span> {{ details.items['0'].volumeInfo.printType }}
-					    </div>
-					     <div class="inner-p">
-					      <span class="label label-primary">Description :</span> {{ details.items['0'].volumeInfo.description }}
-					    </div>
-					  	  </p>
-
-					  <p class="outer-p-2">Ratings:<br>
-					    <strong>Average Rating</strong>: <span class="label label-success">{{ details.items['0'].volumeInfo.averageRating }}</span><br>
-							  </p>
-
-					  
-					</div>
-
-					<div ng-if="!details">
-					  No results found.
-					</div>
-				</div>
-
-			</div>
-
-		<div ng-if='$scope.addmanually'>
-			<div class="container form-row">
-			        Book Title:&nbsp;&nbsp;&nbsp;
-					<input class="form-control"type="text" name="title" ng-model="book.title" placeholder="Book Title" required ng-minlength= "2" />
-			</div>
-
-
-										
-			<div class="container form-row">
-			        Book Author:&nbsp;&nbsp;&nbsp;
-					<input class="form-control" name="author" ng-model="book.author" placeholder="Book Author" ng-required= "true" ng-minlength= "2" />
-			</div> 
-			   
-			<div class="container form-row">
-			        Book Publisher:&nbsp;&nbsp;&nbsp;
-					<input class="form-control"  type="text" name="publisher" ng-model="book.publisher" placeholder="Book Publisher" ng-required= "true" ng-minlength= "2" />
-			</div>
-										 
-			<div class="container form-row">
-			        Date of Publication:&nbsp;&nbsp;&nbsp;
-					<input class="form-control" type="date" name="dateofpublication" ng-model="book.dateofpublication" placeholder="Date of Publication" ng-required= "true" ng-minlength= "2"  data-provide="datepicker"/>
-			</div> 
-			<div class="container form-row" >
-					 Book Image:&nbsp;&nbsp;&nbsp;
-				<div ng-controller="FileUploadCtrl"/>
-			   <input type="file" id="fileToUpload"  onchange="angular.element(this).scope().setFiles(this)" ng-model='book.image' /> 
-			   <input type='button' class="btn-success" ng-click="uploadFile()" value="Upload" />
-						   			  
-       			 </div>
-       	    </div>
-
-			<div class="container form-row">
-			        Description:&nbsp;&nbsp;&nbsp;
-					<textarea class="form-control" type="text" name="description" ng-model="book.description" ng-required= "true" ng-minlength= "2"></textarea>
-			</div>
-											
-			<div class="container form-row">
-			       Category:&nbsp;&nbsp;&nbsp;
-			<input class="form-control" type="text" name="category" ng-model="book.category" placeholder="Category" ng-required= "true" ng-minlength= "2" />
-			</div>
-										
-			<!--   
-			
-			<div class="container form-row">
-			      Team Reference:&nbsp;&nbsp;&nbsp;
-				   <select class="form-control" name="teamreference" ng-model="book.teamreference" ng-options="teamreference as teamreference.desc for teamreference in teamreferences" ng-required= "true" ng-minlength= "2">
-			       <option value="">Please select an option</option>
-			       </select>
-			</div> 
-			<div class="container form-row">
-			        Tags:&nbsp;&nbsp;&nbsp;
-					<input class="form-control"  type="text" name="book.tags" ng-model="tags" placeholder="Tags" ng-required= "true" ng-minlength= "2" />
-			</div>
-			-->
-			   
-			<div class="container form-row">
-			        Library Type:&nbsp;&nbsp;&nbsp;
-					<select class="form-control"name="librarytype" ng-model="book.librarytype" ng-options="
-
-
-					librarytype as librarytype.desc for librarytype in librarytypes" ng-required= "true" ng-minlength= "2"> 
-			        <option value="">Please select an option</option>
-			</select>
-			</div>
-		</div>
-
-			<div class="container input-group form-row " style="padding:5px">
-					<input type= "button" ng-click="manual()" ng-if='addmanually' value="Add Manually" class="btn btn-success" style="margin:2px"> </input>
-					
-					<input type= "button" ng-click="save()" ng-disabled="isClean() || $form.invalid" ng-if='details' value="Save Book" class="btn btn-success" style="margin:2px"> </input>
-					<!--
-					<input type= "button" ng-click="destroy()" ng-if='' value="Remove Book" class="btn btn-danger" style="margin:2px"> </input>
-					-->
-			</div>
-
-				
-
-
-	</form>
-</div>
-
-</div>
-
-</div>
-
-</script>
 
 </body>
+<!-- the controllers -->
+<script src="controllers/editController.js"></script>
+
+<script src="controllers/addbookController.js"></script>
+<script src="controllers/athrbookController.js"></script>
+<script src="controllers/borrowController.js"></script>
+<script src="controllers/createController.js"></script>
+<script src="controllers/editbookController.js"></script>
+<script src="controllers/inviteController.js"></script>
+<script src="controllers/listbookController.js"></script>
+<script src="controllers/listController.js"></script>
+<script src="controllers/regController.js"></script>
+<script src="controllers/regnewController.js"></script>
+
+
+
 <script src="//code.jquery.com/jquery-1.10.2.min.js"></script>
 <script>window.jQuery || document.write('<script src="//code.jquery.com/jquery-1.10.2.min.js"><\/script>')</script>
 

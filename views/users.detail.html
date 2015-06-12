@@ -1,0 +1,54 @@
+
+	<div class="container" fade-in>
+
+    <div style="padding-top: 2em;">
+
+    
+
+            <div class="page-header">
+                <h1>Join SHED</h1>
+             </div>
+             <div class="well">
+	<hr/>
+	{{user._id.$oid}}
+	<form name="myForm" class="form-horizontal">
+
+	  <div class="container form-row" ng-class="{error: myForm.username.$invalid}">
+			<label class="control-label" for="username">Username</label>
+
+			<div class="control-group">
+				<input type="text" name="username" ng-model="user.username" required class="form-control">
+			</div>
+		</div>
+
+		<div class="container form-row" ng-class="{error: myForm.email.$invalid}">
+			<label class="control-label" for="email">Email Address</label>
+
+			<div class="controls">
+				<input name="email" ng-model="user.email" value='{{$scope.user.email}}' required type="email" class="form-control"></input>
+			</div>
+		</div>
+		<div class="container form-row" ng-class="{error: myForm.password.$invalid}">
+			<label class="control-label" for="password">Password</label>
+
+			<div class="controls">
+				<input name="password" ng-model="user.password" required type="password" class="form-control"></input>
+			</div>
+		</div>
+
+		
+
+		<br>
+		<button ng-click="save()" ng-disabled="isClean() || $form.invalid"
+		        class="btn btn-success">Save
+		</button>
+		<button ng-click="destroy()"
+		        ng-show="user._id" class="btn btn-danger">Delete
+		</button>
+	</form>
+</div>
+
+</div>
+
+</div>
+

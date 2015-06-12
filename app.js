@@ -4,37 +4,42 @@ var shed = angular.module('shed', ['restangular', 'ngRoute','angularFileUpload']
 		$routeProvider.
 			when('/', {
 				controller: ListBookCtrl,
-				templateUrl: 'books.list.html'
+				templateUrl: 'views/books.list.html'
         
 			}).
+         when('/borrowed', {
+         controller:BrwCtrl,
+         templateUrl: 'views/books.borrowed.html'
+
+      }).
        when('/invite', {
          controller: InvCtrl,
-         templateUrl: 'users.invite.html'
+         templateUrl: 'views/users.invite.html'
 
       }).
       when('/login', {
-         templateUrl: 'users.login.html'
+         templateUrl: 'views/users.login.html'
 
       }).
        when('/register', {
          controller: RegCtrl,
-         templateUrl: 'users.signup.html'
+         templateUrl: 'views/users.signup.html'
 
       }).
       when('/registernew/:email/:invite', {
           controller: RegnwCtrl,
-        templateUrl: 'users.detail.html'
+        templateUrl: 'views/users.detail.html'
       
 
 
       }).
 			when('/addbook', {
 				controller: AddBookCtrl,
-				templateUrl: 'books.add.html'
+				templateUrl: 'views/books.add.html'
 			}).
 			when('/listbooks', {
 				controller: ListBookCtrl,
-				templateUrl: 'books.list.html'
+				templateUrl: 'views/books.list.html'
 			}).
 			when('/author/:book.author', {
 				controller: AthrBookCtrl,
@@ -60,12 +65,12 @@ var shed = angular.module('shed', ['restangular', 'ngRoute','angularFileUpload']
 			}).
 				when('/listusers', {
 				controller: ListCtrl,
-				templateUrl: 'users.list.html'
+				templateUrl: 'views/users.list.html'
 
 			}).
 			when('/edit/:userId', {
 				controller: EditCtrl,
-				templateUrl: 'users.detail.html',
+				templateUrl: 'views/users.detail.html',
 				resolve: {
 					user: function (Restangular, $route) {
 						return Restangular.one('users', $route.current.params.userId).get();
@@ -74,7 +79,7 @@ var shed = angular.module('shed', ['restangular', 'ngRoute','angularFileUpload']
 			}).
 			when('/editbook/:bookId', {
 				controller: EditBookCtrl,
-				templateUrl: 'books.add.html',
+				templateUrl: 'views/books.add.html',
 				resolve: {
 					book: function (Restangular, $route) {
 						return Restangular.one('books', $route.current.params.bookId).get();
@@ -83,7 +88,7 @@ var shed = angular.module('shed', ['restangular', 'ngRoute','angularFileUpload']
 			}).
 			when('/new', {
 				controller: CreateCtrl,
-				templateUrl: 'users.detail.html',
+				templateUrl: 'views/users.detail.html',
 				
 			}).
 			otherwise({redirectTo: '/'});
@@ -206,7 +211,7 @@ shed.factory('RESTService',
 
 // simple auth service that can use a lot of work... 
 shed.factory('AuthService',
-    function (Restangular,$rootScope,$http) {
+    function (Restangular,$rootScope,$http,$location) {
         var currentUser = null;
         var authorized = false;
         var initialState = true;
@@ -311,8 +316,10 @@ shed.factory('AuthService',
                 
             },
             logout:function () {
+             
                 currentUser = null;
                 authorized = false;
+                $location.path("/login");
             },
             isLoggedIn:function () {
                 return authorized;
@@ -439,443 +446,3 @@ function FileUploadCtrl(scope) {
 
 
 
-
-function ListCtrl($scope, Restangular,$rootScope,$http) {
-$scope.users =[];
-
-  if($rootScope.authService.currentUsertype() == 'admin'){ 
-
-   $http.get('https://api.mongolab.com/api/1/databases/shed_database/collections/users/?apiKey=Iwy7zOOBBd6lUzN5jBhLNhv68Wv8UfUl&q={"invitedby":"'+$rootScope.authService.userId()+'"}').success(function(data){
-     $scope.people = data;
-
-     console.log(data);
- });
-
-        $http.get('https://api.mongolab.com/api/1/databases/shed_database/collections/users/'+$rootScope.authService.userId()+'/?apiKey=Iwy7zOOBBd6lUzN5jBhLNhv68Wv8UfUl').success(function(data){ 
-       $scope.users= angular.extend(data,$scope.people);
-
-      console.log($scope.users );
-
-     });
-
-   
-
-    
-
-	//$scope.groups = Restangular.all("groups").getList().$object;
-  }
-  else{
-      currentUsertype
-  $http.get('https://api.mongolab.com/api/1/databases/shed_database/collections/users/?apiKey=Iwy7zOOBBd6lUzN5jBhLNhv68Wv8UfUl&q={"invitedby":"'+$rootScope.authService.currentInvitedby()+'"}').success(function(data){     $scope.people   = data; console.log(data);});
-  $http.get('https://api.mongolab.com/api/1/databases/shed_database/collections/users/'+$rootScope.authService.currentInvitedby()+'/?apiKey=Iwy7zOOBBd6lUzN5jBhLNhv68Wv8UfUl').success(function(data){ 
-       $scope.users= angular.extend(data,$scope.people);
-
-  });
-};
-
-}
-
-function ListBookCtrl($scope, $location, Restangular,$rootScope,$http) {
-
-$scope.books = {};
-
-   if($rootScope.authService.currentUsertype() == 'admin'){ 
-                
-                $http.get('https://api.mongolab.com/api/1/databases/shed_database/collections/teams/?apiKey=Iwy7zOOBBd6lUzN5jBhLNhv68Wv8UfUl')
-                .success(function(data){
-                    $rootScope.teams = data;
-                    for(i = $rootScope.teams.length -1;i >= 0 ; i--){
-                         team = $rootScope.teams[i];
-                        if($rootScope.authService.currentUser() == team.admin  ){
-                           
-                           $http.get('https://api.mongolab.com/api/1/databases/shed_database/collections/books/?apiKey=Iwy7zOOBBd6lUzN5jBhLNhv68Wv8UfUl&q={"teamid":"'+team._id.$oid+'"}').success(function(data){
-                              $scope.books = data;
-                               console.log($scope.books);
-                           });   
-                               
-                               break; 
-
-                        }
-                        
-
-                    }
-                });
-              }else{
-                 $http.get('https://api.mongolab.com/api/1/databases/shed_database/collections/teams/?apiKey=Iwy7zOOBBd6lUzN5jBhLNhv68Wv8UfUl')
-                .success(function(data){
-                    $rootScope.teams = data;
-                       $http.get('https://api.mongolab.com/api/1/databases/shed_database/collections/users/'+$rootScope.authService.currentInvitedby()+'/?apiKey=Iwy7zOOBBd6lUzN5jBhLNhv68Wv8UfUl').success(function(data){
-                            admin = data;
-                               for(i = $rootScope.teams.length -1;i >= 0 ; i--){
-                          team = $rootScope.teams[i];
-                        if(admin.username == team.admin  ){
-                                   
-                           $http.get('https://api.mongolab.com/api/1/databases/shed_database/collections/books/?apiKey=Iwy7zOOBBd6lUzN5jBhLNhv68Wv8UfUl&q={"teamid":"'+team._id.$oid+'"}').success(function(data){
-                              $scope.books = data;
-                               console.log($scope.books);
-                           });   
-                                           
-                              break;
-                        }
-                        
-
-                    }
-                       });
-                  
-                 
-                });
-                    
-              }
-
-
-  
-}
-function InvCtrl($scope, $location, Restangular,$rootScope,$http) {
-
-  
-       $scope.invite = function() {
-        $scope.user = {};
-      
-        $scope.user.invitedby = $rootScope.authService.userId();
-        $scope.user.email = $scope.invitation.email;
-          var mail = 0;
-        $scope.invitation.user = $rootScope.authService.currentUser();
-        $scope.invitation.team = $rootScope.authService.currentTeam();
-        $scope.invitation.link = $location.host() +'/shed'+'#/registernew/'+$scope.user.email+'/'+$scope.user.invitedby;
-
-
-
-        
-
-       $http.post("mail.php", {"invitation": $scope.invitation  })
-       .success(function(data, status, headers, config) {
-            $scope.data = data;
-            console.log('success:'+data);
-            console.log($scope.invitation.link);
-
-        Restangular.all('users').post($scope.user).then(function (user) {
-        $location.path('/list');
-       });
-          
-                 }).error(function(data, status, headers, config) {
-              $scope.status = status;
-              console.log('error:'+data);
-          });
-
-          console.log(mail);
-
-       
-  
-             
-
-
-          
-       }
-}
-function RegnwCtrl($scope, $location, Restangular,$http, $route){
-   
-
-
-           
-
-
-            $http.get('https://api.mongolab.com/api/1/databases/shed_database/collections/users/?apiKey=Iwy7zOOBBd6lUzN5jBhLNhv68Wv8UfUl&q={"email":"'+$route.current.params.email+'","invitedby":"'+$route.current.params.invite+'"}')
-                .success(function(data){
-                 
-                 $scope.user = data;
-
-                });
-    
-
-    $scope.save = function () {
-         
-        $http({
-          url :'https://api.mongolab.com/api/1/databases/shed_database/collections/users/?apiKey=Iwy7zOOBBd6lUzN5jBhLNhv68Wv8UfUl&q={"email":"'+$route.current.params.email+'","invitedby":"'+$route.current.params.invite+'"}',
-
-          method :"PUT",
-          data :{"password":$scope.user.password,"username":$scope.user.username,"invitedby":$route.current.params.invite,"email":$route.current.params.email,"user_type":"user" }
-        }).success(function(data, status) {
-           
-   
-      $location.path('/login');
-    })
-  };
-   
-}
-function RegCtrl($scope, $location, Restangular) {
-
-    
-
-  
-  $scope.save = function () {
-
-    $scope.team.admin = $scope.user.username;
-    
-    $scope.user.user_type = 'admin';
-  
-    Restangular.all('users').post($scope.user).then(
-
-      function (user) {
-      Restangular.all('teams').post($scope.team).then(
-
-      function (team) {
-      $location.path('/list');
-    });
-    });
-  }
-}
-
-function CreateCtrl($scope, $location, Restangular) {
-	
-	$scope.save = function () {
-		Restangular.all('users').post($scope.user).then(function (user) {
-			$location.path('/list');
-		});
-	}
-}
-
-
-
-
-function AddBookCtrl ($scope, $location, Restangular,$http,$rootScope) {
-  $scope.addmaunally = false;
-
-$scope.manual = function(){
-  $scope.addmaunally = true;
-
-}
-
-   var pendingTask;
- 
-$scope.change = function(){
-  if(pendingTask) {
-    clearTimeout(pendingTask);
-
-  }
-  pendingTask = setTimeout(fetch, 800);
-
-  
-
-};
-
-function fetch() {
-  $http.get("https://www.googleapis.com/books/v1/volumes?q=" + 
-     $scope.search)
-   .success(function(response){
-    $scope.details = response;
-
-  $scope.book.title = $scope.details.items['0'].volumeInfo.title;
-  $scope.book.description = $scope.details.items['0'].volumeInfo.description;
-  $scope.book.publisher = $scope.details.items['0'].volumeInfo.publisher;
-  $scope.book.author = $scope.details.items['0'].volumeInfo.authors['0'];
-  $scope.book.dateofpublication = $scope.details.items['0'].volumeInfo.publishedDate;
-  $scope.book.pic = $scope.details.items['0'].volumeInfo.imageLinks.thumbnail;
-  $scope.book.category = $scope.details.items['0'].volumeInfo.categories['0'];
-  $scope.book.teamid = $rootScope.authService.teamId();
-  if($rootScope.authService.currentUsertype() == 'admin'){
-
-      $scope.book.librarytype = $rootScope.authService.currentTeam()+' Library';
-  
-  }
-  else{
-     $scope.book.librarytype = 'Personal Library';
-  }
-  
-
-  });
-
-
-}
-$scope.update = function(movie){
-  $scope.search = movie.Title;
-  $scope.change();
-};
-$scope.select = function(){
-  this.setSelectionRange(0, this.value.length);
-}   
-    $scope.book={};
-    $scope.teamreferences= [{
-           id: 'Branding',
-           desc: 'Branding'
-              }, {
-           id: 'Digital',
-           desc: 'Digital'
-          }];
-    
-
-    $scope.librarytypes= [{
-      id: 'ArkLibrary',
-      desc: 'Ark Library'
-      }, {
-      id: 'PersonalLibrary',
-      desc: 'Personal Library'
-      }];
-    $scope.save = function () {
-        Restangular.all('books').post($scope.book).then(function (book) {
-            $location.path('/listbooks');
-        });
-    }
-}
-function ViewBookCtrl($rootScope,$scope, $location, Restangular, book,$http){
-  $scope.relatedbooks = Restangular.all("books").getList().$object;
-
-	var original = book;
- 	$scope.book = Restangular.copy(original);
-    $scope.teamreferences= [{
-           id: 'Branding',
-           desc: 'Branding'
-              }, {
-           id: 'Digital',
-           desc: 'Digital'
-          }];
-    
-  
-
-    $scope.librarytypes= [{
-      id: 'ArkLibrary',
-      desc: 'Ark Library'
-      }, {
-      id: 'PersonalLibrary',
-      desc: 'Personal Library'
-      }];
-    $scope.reviews = Restangular.all("reviews").getList().$object;
-     $scope.review ={};
-	$scope.isClean = function () {
-		return angular.equals(original, $scope.book);
-	}
-
-	$scope.borrow = function(user,email){
-     $scope.book.borrowedby = user;
-     $scope.book.borrowedbyemail = email;
-     $scope.book.status = 'borrowed';
-     //$scope.book.push('borrowedby : '+user);
-
-    	console.log('borrowedby :' + 	email);
-		$scope.book.put().then(function () {
-			$location.path('/viewbook/'+book._id.$oid);
-		});
-	
-	};
-
-	$scope.return = function(){
-      $scope.book.status = 'available';
-     $scope.book.borrowedby = '';
-     $scope.book.borrowedbyemail = '';
-
-    		$scope.book.put().then(function () {
-			$location.path('/viewbook/'+book._id.$oid);
-		});
-	
-	};
-
-	$scope.reviewbook= function(user){
-     $scope.review.bookid = book._id.$oid;
-     $scope.review.user = user;
-     //$scope.review.comment = $rootScope.review.comment; 
-       console.log($scope.review.comment);
-       
-      console.log(user);
-      console.log(book._id.$oid);
-
-      Restangular.all('reviews').post($scope.review).then(function (  ) {
-     // $scope.reviews.splice($scope.review.user, $scope.review.comment);
-   		$location.path('/viewbook/'+book._id.$oid);
-		});
-	
-	};
-}
-
-function AthrBookCtrl($scope, $location, Restangular, book){
-
-	var original = book;
-	$scope.book = Restangular.copy(original);
-    $scope.teamreferences= [{
-           id: 'Branding',
-           desc: 'Branding'
-              }, {
-           id: 'Digital',
-           desc: 'Digital'
-          }];
-    
-  
-
-    $scope.librarytypes= [{
-      id: 'ArkLibrary',
-      desc: 'Ark Library'
-      }, {
-      id: 'PersonalLibrary',
-      desc: 'Personal Library'
-      }];
-	$scope.isClean = function () {
-		return angular.equals(original, $scope.book);
-	}
-
-	
-
-	$scope.save = function () {
-		$scope.book.put().then(function () {
-			$location.path('/listbooks');
-		});
-	};
-}
-
-
-function EditBookCtrl($scope, $location, Restangular, book){
-    
-    
-
-	var original = book;
-	$scope.book = Restangular.copy(original);
-    $scope.teamreferences= [{
-           id: 'Branding',
-           desc: 'Branding'
-              }, {
-           id: 'Digital',
-           desc: 'Digital'
-          }];
- 	
-    $scope.librarytypes= [{
-      id: 'ArkLibrary',
-      desc: 'Ark Library'
-      }, {
-      id: 'PersonalLibrary',
-      desc: 'Personal Library'
-      }];
-	$scope.isClean = function () {
-		return angular.equals(original, $scope.book);
-	}
-
-	$scope.destroy = function () {
-		original.remove().then(function () {
-			$location.path('/listbooks');
-		});
-	};
-
-	$scope.save = function () {
-		$scope.book.put().then(function () {
-			$location.path('/listbooks');
-		});
-	};
-}
-
-function EditCtrl($scope, $location, Restangular, user) {
-	
-	var original = user;
-	$scope.user = Restangular.copy(original);
-
-	$scope.isClean = function () {
-		return angular.equals(original, $scope.user);
-	}
-
-	$scope.destroy = function () {
-		original.remove().then(function () {
-			$location.path('/listusers');
-		});
-	};
-
-	$scope.save = function () {
-		$scope.user.put().then(function () {
-			$location.path('/listusers');
-		});
-	};
-}

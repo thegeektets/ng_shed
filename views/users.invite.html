@@ -1,0 +1,29 @@
+
+	<div class="container" fade-in>
+
+    <div style="padding-top: 2em;">
+
+    
+
+            <div class="page-header">
+                <h1>Invite User</h1>
+             </div>
+             <div class="well">
+	<hr/>
+	<form name="myForm" class="form-horizontal">
+
+	  <div class="animated zoomInRight">
+				          <input type="email" ng-model="invitation.email"  class="form-control" placeholder="user email address" autofocus />
+				      	
+		<br>
+		<button ng-click="invite()" ng-disabled="isClean() || $form.invalid"
+		        class="btn btn-success"> Invite User
+		</button>
+	</div>
+	</form>
+</div>
+
+</div>
+
+</div>
+

@@ -1,0 +1,146 @@
+
+	<div class="container" fade-in>
+
+    <div style="padding-top: 2em;">
+
+    
+
+            <div class="page-header">
+                <h1>Book</h1>
+             </div>
+     <div class="well">
+	<hr/>
+	<form name="myform"  novalidate class="container css-form"> 
+
+
+			<div class='container form-row'>
+					<div class="animated zoomInRight">
+				        <div class="input-group search-bar">
+				          <input type="text" ng-model="search" ng-change="change()" onclick="select()" class="form-control" placeholder="search book" autofocus />
+				          <span class="input-group-addon bar-style"><i class="glyphicon glyphicon-search"></i></span>
+				        </div>
+
+				    <div ng-if="!details">
+					  Loading results...
+					</div>
+						<div ng-if="details">
+					  <img ng-src="{{ details.items['0'].volumeInfo.imageLinks.thumbnail }}" class="thumbnail animated flip movie-poster">
+
+					  <span class="span-outer">
+					    <a href="#" target="_blank">{{ details.items['0'].volumeInfo.title }}</a>
+					    <h5>{{details.items['0'].volumeInfo.subtitle}}</h5>
+					  </span> 
+					  <p><strong>Published on:</strong> {{ details.items['0'].volumeInfo.publishedDate }} </p>
+					  <p class="outer-p">
+					    <div class="inner-p">
+					      <span class="label label-primary">Publisher :</span> {{ details.items['0'].volumeInfo.publisher }}
+					    </div>
+					    <div class="inner-p">
+					      <span class="label label-primary">Author :</span> {{ details.items['0'].volumeInfo.authors['0'] }}
+					    </div>
+					    <div class="inner-p">
+					      <span class="label label-primary">Type :</span> {{ details.items['0'].volumeInfo.printType }}
+					    </div>
+					     <div class="inner-p">
+					      <span class="label label-primary">Description :</span> {{ details.items['0'].volumeInfo.description }}
+					    </div>
+					  	  </p>
+
+					  <p class="outer-p-2">Ratings:<br>
+					    <strong>Average Rating</strong>: <span class="label label-success">{{ details.items['0'].volumeInfo.averageRating }}</span><br>
+							  </p>
+
+					  
+					</div>
+
+					<div ng-if="!details">
+					  No results found.
+					</div>
+				</div>
+
+			</div>
+
+		<div ng-if='$scope.addmanually'>
+			<div class="container form-row">
+			        Book Title:&nbsp;&nbsp;&nbsp;
+					<input class="form-control"type="text" name="title" ng-model="book.title" placeholder="Book Title" required ng-minlength= "2" />
+			</div>
+
+
+										
+			<div class="container form-row">
+			        Book Author:&nbsp;&nbsp;&nbsp;
+					<input class="form-control" name="author" ng-model="book.author" placeholder="Book Author" ng-required= "true" ng-minlength= "2" />
+			</div> 
+			   
+			<div class="container form-row">
+			        Book Publisher:&nbsp;&nbsp;&nbsp;
+					<input class="form-control"  type="text" name="publisher" ng-model="book.publisher" placeholder="Book Publisher" ng-required= "true" ng-minlength= "2" />
+			</div>
+										 
+			<div class="container form-row">
+			        Date of Publication:&nbsp;&nbsp;&nbsp;
+					<input class="form-control" type="date" name="dateofpublication" ng-model="book.dateofpublication" placeholder="Date of Publication" ng-required= "true" ng-minlength= "2"  data-provide="datepicker"/>
+			</div> 
+			<div class="container form-row" >
+					 Book Image:&nbsp;&nbsp;&nbsp;
+				<div ng-controller="FileUploadCtrl"/>
+			   <input type="file" id="fileToUpload"  onchange="angular.element(this).scope().setFiles(this)" ng-model='book.image' /> 
+			   <input type='button' class="btn-success" ng-click="uploadFile()" value="Upload" />
+						   			  
+       			 </div>
+       	    </div>
+
+			<div class="container form-row">
+			        Description:&nbsp;&nbsp;&nbsp;
+					<textarea class="form-control" type="text" name="description" ng-model="book.description" ng-required= "true" ng-minlength= "2"></textarea>
+			</div>
+											
+			<div class="container form-row">
+			       Category:&nbsp;&nbsp;&nbsp;
+			<input class="form-control" type="text" name="category" ng-model="book.category" placeholder="Category" ng-required= "true" ng-minlength= "2" />
+			</div>
+										
+			<!--   
+			
+			<div class="container form-row">
+			      Team Reference:&nbsp;&nbsp;&nbsp;
+				   <select class="form-control" name="teamreference" ng-model="book.teamreference" ng-options="teamreference as teamreference.desc for teamreference in teamreferences" ng-required= "true" ng-minlength= "2">
+			       <option value="">Please select an option</option>
+			       </select>
+			</div> 
+			<div class="container form-row">
+			        Tags:&nbsp;&nbsp;&nbsp;
+					<input class="form-control"  type="text" name="book.tags" ng-model="tags" placeholder="Tags" ng-required= "true" ng-minlength= "2" />
+			</div>
+			-->
+			   
+			<div class="container form-row">
+			        Library Type:&nbsp;&nbsp;&nbsp;
+					<select class="form-control"name="librarytype" ng-model="book.librarytype" ng-options="
+
+
+					librarytype as librarytype.desc for librarytype in librarytypes" ng-required= "true" ng-minlength= "2"> 
+			        <option value="">Please select an option</option>
+			</select>
+			</div>
+		</div>
+
+			<div class="container input-group form-row " style="padding:5px">
+					<input type= "button" ng-click="manual()" ng-if='addmanually' value="Add Manually" class="btn btn-success" style="margin:2px"> </input>
+					
+					<input type= "button" ng-click="save()" ng-disabled="isClean() || $form.invalid" ng-if='details' value="Save Book" class="btn btn-success" style="margin:2px"> </input>
+					<!--
+					<input type= "button" ng-click="destroy()" ng-if='' value="Remove Book" class="btn btn-danger" style="margin:2px"> </input>
+					-->
+			</div>
+
+				
+
+
+	</form>
+</div>
+
+</div>
+
+</div>

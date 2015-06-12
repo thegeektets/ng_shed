@@ -1,0 +1,114 @@
+
+<!-- CACHE FILE: book.view.html -->
+<script type="text/ng-template" id="book.view.html">
+	<div class="container" fade-in>
+
+    <div style="padding-top: 2em;">
+
+    
+
+            <div class="page-header">
+                <h1>Book View</h1>
+             </div>
+     <div class="well">
+	<hr/>
+	<div>
+	<ul class="list-group">
+		<li class="list-group-item">
+		<div class="row">
+		<div class="col-md-6">
+			<h3> Book Title :{{book.title}} </h3>
+			<h4> Author : {{book.author}} </h4>
+			<h4> Publisher : {{book.publisher}} </h4>
+			<h4> Date of Publication : {{book.dateofpublication}} </h4>
+			<h5> Category : {{book.category}} </h5>
+			<h5> Team Reference : {{book.teamreference.id}} </h5>
+			<h5> Library Type : {{book.librarytype.desc}} </h5>
+			<p>Description : {{book.description}}</p>
+	    </div>
+	
+       <div class="col-md-6">
+            <img ng-if ='book.image' ng-src='img/{{book.image.replace("C:\\fakepath\\", "")}}' alt="image" width='100%'/>
+	    	<img ng-if='book.pic' ng-src='{{book.pic}}' alt="image" width='100%'/>
+	    </div>
+	    </div>
+	    <div class="row" style="padding:20px">
+	    <a href="#/viewbook/{{relatedbook._id.$oid}}" ng-repeat="relatedbook in relatedbooks | orderBy:ordertype | filter :book.category " ng-show="relatedbook._id.$oid">
+      		  <img ng-if='relatedbook.image' ng-src='img/{{relatedbook.image.replace("C:\\fakepath\\", "")}}' alt="image" width='15%' style='float:left'/>
+      		  <img ng-if='relatedbook.pic' ng-src='{{relatedbook.pic}}' alt="image" width='15%' style='float:left'/>
+      		
+	      
+    	</a>
+	    </div>
+	   <div ng-show="authService.isLoggedIn()">
+            	
+            	<div ng-if="book.status == 'borrowed'">
+
+                  <span style="color:#286100">This book has been borrowed by <a href='mailto:{{book.borrowedbyemail}}'>{{book.borrowedby}}</a></span>
+	   
+                </div>
+              	
+              	<div class="page-header">
+               				 <h3>Book Reviews</h3>
+             	 </div>
+             	 <div class="well">
+				
+                 <div class="panel panel-default" ng-repeat ="review in reviews.slice().reverse() | filter:{ bookid: book._id.$oid}:true | limitTo:5" ng-show="review._id.$oid">
+ 								 <div class="panel-heading"> <i class="glyphicon glyphicon-user glyphicon-white"></i> User : {{review.user}}</div>
+								 <div class="panel-body">Review : <p>{{review.comment}}</p></div>
+				</div>
+                </div>
+                	
+                <div ng-if="book.borrowedby == authService.currentUser()">
+                	 <button class='btn btn-success' ng-click='return()'> Return  Book </button> 
+                </div>
+                <div>
+                	      <div class="page-header">
+               				 <h3>Review Book</h3>
+             			  </div>
+                	 <div class="well">
+						<form class="form-horizontal" name="myForm">
+									<div class="container form-row">
+			       					 Username:&nbsp;&nbsp;&nbsp;
+			       					 {{authService.currentUser()}}
+									 </div>
+									<div class="container form-row">
+			       					 Review:&nbsp;&nbsp;&nbsp;
+								<textarea ng-model="review.comment" class="form-control"> </textarea>
+									 </div>
+									<div style="padding:10px" class="container form-row">
+								<button  class="btn btn-success" ng-click="reviewbook(authService.currentUser())"> Review Book</button>
+									</div>
+                		
+						</form>
+					  </div>
+                </div>
+                <div ng-if="book.status != 'borrowed'">
+                	<button class='btn btn-success' ng-click='borrow(authService.currentUser(), authService.currentEmail())'>
+                		Borrow  Book
+                	</button>
+
+                </div>
+              </div>  		
+					   
+               
+
+     </div>
+       
+        <div ng-show="!authService.isLoggedIn()">
+            
+           <span style="color:#d9230f;padding-bottom:10px;view:block"> Please Login to Borrow Book</span>
+        </div>
+
+        </li>
+
+
+		</ul>
+	</div>
+</div>
+
+</div>
+
+</div>
+	
+</script>

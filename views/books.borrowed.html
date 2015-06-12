@@ -1,0 +1,55 @@
+ <div class="container" fade-in>
+
+    <div style="padding-top: 2em;">
+
+    
+
+            <div class="page-header">
+                <h1>Borrowed List</h1>
+             </div>
+     <div class="well">
+          <input type="text" name="search" id="search" ng-model="search" class="search-query" placeholder="Search">
+  
+  <div style="float:right">
+  Order By:
+  <select ng-model="ordertype">
+    <option value="title" selected='true' class='form-control'>Title</option>
+    <option value="author" selected='true' class='form-control'>Author</option>
+     <option value="category" selected='true' class='form-control'>Category</option>
+     <option value="teamreference" selected='true' class='form-control'>Team</option>
+    
+  </select>
+  </div>
+  <hr/>
+  <h3 style="text-align:center"><span >{{search}}</span></h3>
+  <div>
+  <ul class="list-group">
+    <li class="list-group-item" ng-repeat="book in books | filter:search | orderBy:ordertype | filter:filters " ng-show="book._id.$oid" ng-if='book.borrowedby'>
+      
+      <h3> Book Title :{{book.title}} </h3>
+       <div class = 'row'>
+       <div class="col-md-2">
+         <img ng-if='book.image'ng-src='img/{{book.image.replace("C:\\fakepath\\", "")}}' alt="image" width='100%'/>
+         <img ng-if='book.pic'ng-src='{{book.pic}}' alt="image" width='100%'/>
+
+
+           </div>
+           <div class="col-md-10">
+      <h4> Author : <span style="color:#a91b0c" ng-click="$parent.filters = {author: book.author}">{{book.author}}</span> </h4>
+      <h5> Category : {{book.category}} </h5>
+      <h5> Publication Date : {{book.dateofpublication}} </h5>
+      <p>Borrowedby : {{book.borrowedby}}</p>
+      </div>
+      </div>
+
+      
+      <a href="#/viewbook/{{book._id.$oid}}" class="btn btn-primary"> View Book </a>
+      
+      
+    
+    </ul>
+</div>
+
+</div>
+
+</div>

@@ -1,0 +1,63 @@
+
+	<div class="container" fade-in>
+
+    <div style="padding-top: 2em;">
+
+    
+
+            <div class="page-header">
+             </div>
+     <div class="well">
+					  <div class="modal-content">
+            <div class="modal-header">
+                 <h4 class="modal-title">Register | get started..</h4>
+            </div>
+            <div class="modal-body">
+            	 <div class="container form-row">
+			
+                <span id="register-username">Username</span>
+                <input ng-model="user.username" type="text" placeholder="username" name='username' class="form-control" required>
+               
+                </div>
+			    <div class="container form-row">
+			
+                <span id="register-username">Email Address</span>
+                <input ng-model="user.email" type="email" placeholder="email address" name='email address' class="form-control" required>
+               
+                </div>
+
+			    <div class="container form-row">
+			
+                <span id="register-team">Team</span>
+                <input ng-model="team.name" type="text" placeholder="Team" name='team' class="form-control" required>
+               
+                </div>
+
+                <div class="container form-row">
+              
+                <span id="register-password">Password</span>
+                   <input ng-model="user.password" type="password" placeholder="Password" name='password' class="form-control"  required>
+              	</div>	
+                <div class="container form-row">
+              
+                <span id="register-password">Password</span>
+                   <input type="password" name="confirmPassword" class="form-control" 
+                   ng-model="cpassword" 
+                   required compare-to="user.password" required/>
+              	</div>	
+                
+            </div>
+            <div class="modal-footer">
+                <a class="btn btn-success" data-dismiss="modal" ng-click="save()" ng-disabled="isClean() || $form.invalid" >
+                    <i
+                            class="glyphicon glyphicon-user glyphicon-white"></i> Register</a>
+            </div>
+        </div>
+
+</div>
+
+</div>
+
+</div>
+
+
