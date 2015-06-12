@@ -19,7 +19,7 @@
 				          <input type="text" ng-model="search" ng-change="change()" onclick="select()" class="form-control" placeholder="search book" autofocus />
 				          <span class="input-group-addon bar-style"><i class="glyphicon glyphicon-search"></i></span>
 				        </div>
-				    <div style="text-align:center;padding-top:10px"> 	{{$scope.addmanually}} {{$scope.book}}	</div>
+				    <div style="text-align:center;padding-top:10px"> 	{{$rootScope.addmanually}} {{$scope.book}}	</div>
 				    <div ng-if="!details" style="text-align:center;padding-top:10px">
 					  Loading results...
 					</div>
@@ -67,7 +67,7 @@
 
 			</div>
 
-		<div ng-if='$scope.addmanually'>
+		<div >
 			<div class="container form-row">
 			        Book Title:&nbsp;&nbsp;&nbsp;
 					<input class="form-control"type="text" name="title" ng-model="book.title" placeholder="Book Title" required ng-minlength= "2" />

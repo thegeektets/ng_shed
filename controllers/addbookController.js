@@ -1,10 +1,10 @@
 function AddBookCtrl ($scope, $location, Restangular,$http,$rootScope) {
- $scope.addmanually = 'false';
+ $rootScope.addmanually = 'false';
 
 $scope.manual = function(){
   console.log('switching to manual');
 
-  $scope.addmanually = 'true';
+  $rootScope.addmanually = 'true';
 
 }
 
@@ -77,6 +77,7 @@ $scope.select = function(){
       desc: 'Personal Library'
       }];
     $scope.save = function () {
+        $scope.book.transaction = $scope.book.copies;
 
         Restangular.all('books').post($scope.book).then(function (book) {
             $location.path('/listbooks');
