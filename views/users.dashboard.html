@@ -41,7 +41,7 @@
 
 		<div class="col-md-12">
 		
-		<h3 style="text-align:center"> {{getTotalborrowed()	}} borrowed copies  </h3>
+		<h3 style="text-align:center"> {{getTotalborrowed()	}} borrowed <span ng-if='getTotalborrowed() != 1'>copies</span> <span ng-if='getTotalborrowed()==1'>copy</span> </h3>
 	
 	    </div>
 	

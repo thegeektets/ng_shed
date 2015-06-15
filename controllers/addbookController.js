@@ -38,7 +38,7 @@ function fetch() {
   $scope.book.teamid = $rootScope.authService.teamId();
   $scope.book.transaction = $scope.book.copies;
 
-  if($rootScope.authService.currentUsertype() == 'admin'){
+ /* if($rootScope.authService.currentUsertype() == 'admin'){
 
       $scope.book.librarytype = $rootScope.authService.currentTeam()+' Library';
   
@@ -46,7 +46,7 @@ function fetch() {
   else{
      $scope.book.librarytype = 'Personal Library';
   }
-  
+  */
 
   });
 
@@ -70,8 +70,8 @@ $scope.select = function(){
     
 
     $scope.librarytypes= [{
-      id: 'ArkLibrary',
-      desc: 'Ark Library'
+      id: 'TeamLibrary',
+      desc: 'Team Library'
       }, {
       id: 'PersonalLibrary',
       desc: 'Personal Library'

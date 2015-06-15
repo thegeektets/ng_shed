@@ -20,8 +20,8 @@ function ViewBookCtrl($rootScope,$scope, $location, Restangular, book,$http){
   
 
     $scope.librarytypes= [{
-      id: 'ArkLibrary',
-      desc: 'Ark Library'
+      id: 'TeamLibrary',
+      desc: 'Team Library'
       }, {
       id: 'PersonalLibrary',
       desc: 'Personal Library'
@@ -40,6 +40,7 @@ function ViewBookCtrl($rootScope,$scope, $location, Restangular, book,$http){
      $scope.borrowed.bookname = $scope.book.title;
      $scope.borrowed.username = user;
      $scope.borrowed.teamid = $scope.book.teamid;
+     $scope.borrowed.usermail = email;
 
      $scope.book.borrowedby = user;
      $scope.book.borrowedbyemail = email;
@@ -87,6 +88,7 @@ function ViewBookCtrl($rootScope,$scope, $location, Restangular, book,$http){
           "bookname":$scope.borrowed.bookname,
           "username":$scope.borrowed.username,
           "teamid":$scope.borrowed.teamid,
+           "usermail":$scope.borrowed.usermail,
           "returndate":new Date()}
         }).success(function(data, status) {
            
