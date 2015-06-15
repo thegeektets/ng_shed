@@ -1,5 +1,5 @@
 
-var shed = angular.module('shed', ['restangular', 'ngRoute','angularFileUpload']).
+var shed = angular.module('shed', ['restangular', 'ngRoute','angular.filter','angularFileUpload']).
 	config(function ($routeProvider, RestangularProvider) {
 		$routeProvider.
 			when('/', {
@@ -7,6 +7,11 @@ var shed = angular.module('shed', ['restangular', 'ngRoute','angularFileUpload']
 				templateUrl: 'views/books.list.html'
         
 			}).
+        when('/dashboard', {
+        controller: dashCtrl,
+        templateUrl: 'views/users.dashboard.html'
+        
+      }).
          when('/borrowed', {
          controller:BrwCtrl,
          templateUrl: 'views/books.borrowed.html'

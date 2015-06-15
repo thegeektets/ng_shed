@@ -44,6 +44,9 @@
 
       <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
       <ul class="nav navbar-nav">
+                <li ng-if='authService.currentUsertype() == "admin"'>
+        <a href="#/dashboard">Dashboard <span class="sr-only">(current)</span></a></li>
+
         <li class=""><a href="#">Books List <span class="sr-only">(current)</span></a></li>
         <li class=""><a href="#/addbook">Add Book <span class="sr-only">(current)</span></a></li>
       
@@ -137,6 +140,8 @@
 
 </body>
 <!-- the controllers -->
+<script src="controllers/dashboardController.js"></script>
+
 <script src="controllers/editController.js"></script>
 <script src="controllers/viewbookController.js"></script>
 <script src="controllers/addbookController.js"></script>
@@ -157,5 +162,6 @@
 
 <script src="js/vendor/bootstrap/bootstrap.min.js"></script>
 <script src="js/notificationManager.js"></script>
+<script src="js/angular-filter.min.js"></script>
 
 </html>
