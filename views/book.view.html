@@ -33,13 +33,14 @@
 	    </div>
 	    <div class="row" style="padding:20px">
 	    <a href="#/viewbook/{{relatedbook._id.$oid}}" ng-repeat="relatedbook in relatedbooks | orderBy:ordertype | filter :book.category " ng-show="relatedbook._id.$oid">
+	    		<span ng-if = 'relatedbook._id.$oid != book._id.$oid'>
       		  <img ng-if='relatedbook.image' ng-src='img/{{relatedbook.image.replace("C:\\fakepath\\", "")}}' alt="image" width='15%' style='float:left'/>
       		  <img ng-if='relatedbook.pic' ng-src='{{relatedbook.pic}}' alt="image" width='15%' style='float:left'/>
       		
-	      
+	      	</span>
     	</a>
 	    </div>
-	   <div ng-show="authService.isLoggedIn()">
+	   <div ng-show="authService.isLoggedIn()">	
             	
             	<div ng-if="book.transaction < 1">
 

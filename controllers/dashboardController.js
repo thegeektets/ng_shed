@@ -89,16 +89,5 @@ $scope.getTotalborrowed = function(){
     return total;
 }
 
-function sum (object) {
-    var data = object;
-    var tmpSum
-
-     for (var i in object){
-      tmpSum =+ object[i].value;
-    }
-
-    $scope.sum = tmpSum 
-};
- 
 
 }
